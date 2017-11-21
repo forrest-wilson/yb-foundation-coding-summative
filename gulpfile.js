@@ -1,7 +1,8 @@
 const gulp = require("gulp"),
     clean = require("gulp-clean"),
+    sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass"),
-    browserSync = require("browser-sync").create();
+    browserSync = require("browser-sync").create(),
     runSequence = require("run-sequence");
 
 gulp.task("clean", () => {
@@ -11,8 +12,10 @@ gulp.task("clean", () => {
 
 gulp.task("sass", () => {
     return gulp.src("./src/sass/*.scss")
+        .pipe(sourcemaps.init())
         .pipe(sass()
         .on("error", sass.logError))
+        .pipe(sourcemaps.write(""))
         .pipe(gulp.dest("./dist/css/"));
 });
 

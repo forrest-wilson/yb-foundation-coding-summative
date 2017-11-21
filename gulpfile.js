@@ -22,12 +22,24 @@ gulp.task("sass", () => {
         .pipe(gulp.dest("./dist/css/"));
 });
 
+// ES5 to ES6 Compiler
 gulp.task("babel", () => {
     gulp.src("./src/js/app.js")
         .pipe(babel({
             presets: ["env"]
         }))
         .pipe(gulp.dest("./dist/js/"));
+});
+
+// Copies the local dependancy files
+gulp.task("local-file-copy", () => {
+    // jQuery
+    gulp.src("./node_modules/jquery/dist/jquery.min.js")
+        .pipe(gulp.dest("./dist/js/"));
+
+    // Normalize.css
+    gulp.src("./node_modules/normalize.css/normalize.css")
+        .pipe(gulp.dest("./dist/css/"));
 });
 
 // Copies the HTML files
@@ -54,15 +66,15 @@ gulp.task("browser-sync", () => {
 
 // Reloads the browser
 gulp.task("reload-browser", () => {
-    gulp.src("./temp/")
-    .pipe(browserSync.reload({
-        stream: true
-    }));
+    gulp.src("./dist/")
+        .pipe(browserSync.reload({
+            stream: true
+        }));
 });
 
 // Task that builds the dist folder
 gulp.task("build", (cb) => {
-    runSequence("clean", "sass", "babel", "html-copy", "reload-browser", cb);
+    runSequence("clean", "sass", "babel", "local-file-copy", "html-copy", "reload-browser", cb);
 });
 
 // Task that watches all files for changes and runs

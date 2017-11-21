@@ -2,6 +2,7 @@ const gulp = require("gulp"),
     clean = require("gulp-clean"),
     sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass"),
+    babel = require("gulp-babel"),
     browserSync = require("browser-sync").create(),
     runSequence = require("run-sequence");
 
@@ -19,6 +20,14 @@ gulp.task("sass", () => {
         .on("error", sass.logError))
         .pipe(sourcemaps.write(""))
         .pipe(gulp.dest("./dist/css/"));
+});
+
+gulp.task("babel", () => {
+    gulp.src("./src/js/app.js")
+        .pipe(babel({
+            presets: ["env"]
+        }))
+        .pipe(gulp.dest("./dist/js/"));
 });
 
 // Copies the HTML files
@@ -53,7 +62,7 @@ gulp.task("reload-browser", () => {
 
 // Task that builds the dist folder
 gulp.task("build", (cb) => {
-    runSequence("clean", "sass", "html-copy", "reload-browser", cb);
+    runSequence("clean", "sass", "babel", "html-copy", "reload-browser", cb);
 });
 
 // Task that watches all files for changes and runs

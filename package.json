@@ -1,0 +1,19 @@
+{
+  "name": "yb-foundation-coding-summative",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/forrest-wilson/yb-foundation-coding-summative.git"
+  },
+  "author": "Forrest Wilson-Jennings",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/forrest-wilson/yb-foundation-coding-summative/issues"
+  },
+  "homepage": "https://github.com/forrest-wilson/yb-foundation-coding-summative#readme"
+}

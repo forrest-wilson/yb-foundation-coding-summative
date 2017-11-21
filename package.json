@@ -1,10 +1,11 @@
 {
   "name": "yb-foundation-coding-summative",
   "version": "1.0.0",
-  "description": "",
+  "description": "Summative Assessment for Yoobee Foundation Coding Module",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "./node_modules/gulp/bin/gulp.js start",
+    "build": "./node_modules/gulp/bin/gulp.js build"
   },
   "repository": {
     "type": "git",
@@ -15,5 +16,15 @@
   "bugs": {
     "url": "https://github.com/forrest-wilson/yb-foundation-coding-summative/issues"
   },
-  "homepage": "https://github.com/forrest-wilson/yb-foundation-coding-summative#readme"
+  "homepage": "https://github.com/forrest-wilson/yb-foundation-coding-summative#readme",
+  "dependencies": {
+    "jquery": "3.2.1"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "3.9.1",
+    "gulp-clean": "0.3.2",
+    "gulp-sass": "3.1.0",
+    "run-sequence": "2.2.0"
+  }
 }

@@ -3,6 +3,8 @@ $(document).ready(function() {
     //// Variable Declarations ////
     ///////////////////////////////
 
+    const carsJsonUrl = "../json/carPrices.json";
+
     ///////////////////////////////
     //// Function Declarations ////
     ///////////////////////////////

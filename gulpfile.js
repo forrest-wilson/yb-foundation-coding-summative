@@ -40,6 +40,10 @@ gulp.task("local-file-copy", () => {
     // Normalize.css
     gulp.src("./node_modules/normalize.css/normalize.css")
         .pipe(gulp.dest("./dist/css/"));
+
+    // JSON Data
+    gulp.src("./src/json/*.json")
+        .pipe(gulp.dest("./dist/json/"));
 });
 
 // Copies the HTML files

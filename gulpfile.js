@@ -48,6 +48,10 @@ gulp.task("local-file-copy", () => {
     // Images
     gulp.src("./src/img/*.*")
         .pipe(gulp.dest("./dist/img/"));
+
+    // Fonts
+    gulp.src("./src/fonts/**/*.*")
+        .pipe(gulp.dest("./dist/fonts/"));
 });
 
 // Copies the HTML files

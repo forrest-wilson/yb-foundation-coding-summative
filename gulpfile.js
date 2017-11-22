@@ -44,6 +44,10 @@ gulp.task("local-file-copy", () => {
     // JSON Data
     gulp.src("./src/json/*.json")
         .pipe(gulp.dest("./dist/json/"));
+
+    // Images
+    gulp.src("./src/img/*.*")
+        .pipe(gulp.dest("./dist/img/"));
 });
 
 // Copies the HTML files

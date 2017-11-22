@@ -3,7 +3,7 @@ $(document).ready(function() {
     //// Variable Declarations ////
     ///////////////////////////////
 
-    const carsJsonUrl = "../json/carPrices.json";
+    const carsJsonUrl = "../json/vehicleInfo.json";
 
     ///////////////////////////////
     //// Function Declarations ////

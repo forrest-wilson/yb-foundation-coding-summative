@@ -24,7 +24,7 @@ gulp.task("sass", () => {
 
 // ES5 to ES6 Compiler
 gulp.task("babel", () => {
-    gulp.src("./src/js/app.js")
+    return gulp.src("./src/js/app.js")
         .pipe(babel({
             presets: ["env"]
         }))
@@ -56,7 +56,7 @@ gulp.task("local-file-copy", () => {
 
 // Copies the HTML files
 gulp.task("html-copy", () => {
-    gulp.src("./src/*.html")
+    return gulp.src("./src/*.html")
         .pipe(gulp.dest("./dist/"));
 });
 
@@ -78,7 +78,7 @@ gulp.task("browser-sync", () => {
 
 // Reloads the browser
 gulp.task("reload-browser", () => {
-    gulp.src("./dist/")
+    return gulp.src("./dist/")
         .pipe(browserSync.reload({
             stream: true
         }));

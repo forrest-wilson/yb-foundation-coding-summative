@@ -12,4 +12,9 @@ $(document).ready(function() {
     ////////////////////////
     //// Event Handlers ////
     ////////////////////////
+
+    $("#howToText").click((e) => {
+        e.preventDefault();
+        // Do something
+    });
 });

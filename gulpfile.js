@@ -52,6 +52,10 @@ gulp.task("local-file-copy", () => {
     // Fonts
     gulp.src("./src/fonts/**/*.*")
         .pipe(gulp.dest("./dist/fonts/"));
+
+    // Template7
+    gulp.src("./node_modules/template7/dist/template7.min.js")
+        .pipe(gulp.dest("./dist/js/"));
 });
 
 // Copies the HTML files

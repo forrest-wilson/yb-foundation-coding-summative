@@ -4,13 +4,18 @@
 
 .header {
     @include positioning(fixed, 0px, $l: 0px, $r: 0px);
-    height: 100px;
-    background-color: red;
+    height: 50px;
 
     .how-to-text {
         @include positioning(absolute, $r: 0px);
         display: inline-block;
-        line-height: 100px;
+        line-height: 50px;
         padding-right: 20px;
+    }
+}
+
+.main {
+    .map {
+        @include positioning(fixed, 0, 0, 0, 0);
     }
 }

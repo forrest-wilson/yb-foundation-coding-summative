@@ -3,6 +3,7 @@
         {
             "name": "Motorbike",
             "vehicle": "motorbike",
+            "imageURL": "./img/motorbike.png",
             "persons": {
                 "min": 1,
                 "max": 1
@@ -17,6 +18,7 @@
         {
             "name": "2017 Toyota Yaris",
             "vehicle": "smallCar",
+            "imageURL": "./img/small-car-avis.png",
             "persons": {
                 "min": 1,
                 "max": 2
@@ -31,6 +33,7 @@
         {
             "name": "2017 BMW X5",
             "vehicle": "largeCar",
+            "imageURL": "./img/large-car-avis.png",
             "persons": {
                 "min": 1,
                 "max": 5
@@ -45,6 +48,7 @@
         {
             "name": "Motor Home",
             "vehicle": "motorHome",
+            "imageURL": "./img/motorhome.png",
             "persons": {
                 "min": 2,
                 "max": 6

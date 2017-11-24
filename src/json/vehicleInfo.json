@@ -1,7 +1,7 @@
 {
     "cars": [
         {
-            "id": 1,
+            "name": "Motorbike",
             "vehicle": "motorbike",
             "persons": {
                 "min": 1,
@@ -15,7 +15,7 @@
             "mileage": 3.7
         },
         {
-            "id": 2,
+            "name": "2017 Toyota Yaris",
             "vehicle": "smallCar",
             "persons": {
                 "min": 1,
@@ -29,7 +29,7 @@
             "mileage": 8.5
         },
         {
-            "id": 3,
+            "name": "2017 BMW X5",
             "vehicle": "largeCar",
             "persons": {
                 "min": 1,
@@ -43,7 +43,7 @@
             "mileage": 9.7
         },
         {
-            "id": 4,
+            "name": "Motor Home",
             "vehicle": "motorHome",
             "persons": {
                 "min": 2,

@@ -4,7 +4,7 @@ Summative Assessment for Yoobee Foundation Coding Module
 ## Requirements
 
 * [Node.js](https://nodejs.org/en/)
-* [Gulp Task Runner](https://gulpjs.com/)
+* [Gulp](https://gulpjs.com/)
 
 ## Installing dependancies
 

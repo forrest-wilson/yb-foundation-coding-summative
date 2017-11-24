@@ -3,6 +3,8 @@ const gulp = require("gulp"),
     sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass"),
     babel = require("gulp-babel"),
+    uglify = require("gulp-uglify"),
+    rename = require("gulp-rename"),
     browserSync = require("browser-sync").create(),
     runSequence = require("run-sequence");
 
@@ -16,8 +18,11 @@ gulp.task("clean", () => {
 gulp.task("sass", () => {
     return gulp.src("./src/sass/*.scss")
         .pipe(sourcemaps.init())
-        .pipe(sass()
+        .pipe(sass({
+            outputStyle: 'compressed'
+        })
         .on("error", sass.logError))
+        .pipe(rename("style.min.css"))
         .pipe(sourcemaps.write(""))
         .pipe(gulp.dest("./dist/css/"));
 });
@@ -28,6 +33,8 @@ gulp.task("babel", () => {
         .pipe(babel({
             presets: ["env"]
         }))
+        .pipe(uglify())
+        .pipe(rename("app.min.js"))
         .pipe(gulp.dest("./dist/js/"));
 });
 

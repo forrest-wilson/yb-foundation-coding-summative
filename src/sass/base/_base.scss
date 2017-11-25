@@ -37,13 +37,11 @@ button {
     }
 
     &.btn {
-        margin-top: 20px;
-        margin-bottom: 20px;
+        font-family: $fontFamily;
+        padding: 15px 25px;
     }
 
     &.btn-style-dark {
-        font-family: $fontFamily;
-        padding: 15px 25px;
         background: linear-gradient(to bottom right, $primaryGradTwo, $primaryGradOne);
         box-shadow: $boxShadowDark;
     }

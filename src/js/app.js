@@ -39,8 +39,11 @@ $(document).ready(function() {
     //// Event Handlers ////
     ////////////////////////
 
+    //
     // Click Handlers
+    //
 
+    // "How to" event listeners
     $("#howToText").click((e) => {
         e.preventDefault();
         toggleHowDoIWorkOverlay();
@@ -48,6 +51,17 @@ $(document).ready(function() {
 
     $("#howDoIWorkPopupClose").click((e) => {
         toggleHowDoIWorkOverlay();
+    });
+
+    // Section fade in/out handlers
+    $("#sectionOneButton").click(() => {
+        $("#sectionOne").addClass("hidden");
+        $("#sectionTwo").show();
+
+        setTimeout(() => {
+            $("#sectionOne").hide();
+            $("#sectionTwo").removeClass("hidden");
+        }, transitionSpeed);
     });
 
     // Window Resize Handler

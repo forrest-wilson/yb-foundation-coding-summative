@@ -131,6 +131,7 @@ gulp.task("clean-dist", () => {
 
 gulp.task("html-replace", () => {
     return gulp.src("./temp/*.html")
+        .pipe(replace("<link rel=\"application/x-font-ttf\" href=\"./fonts/Josefin_Sans/JosefinSans-Thin.ttf\"><link rel=\"application/x-font-ttf\" href=\"./fonts/Josefin_Sans/JosefinSans-Light.ttf\">", "<link href=\"https://fonts.googleapis.com/css?family=Josefin+Sans:100,300\" rel=\"stylesheet\">"))
         .pipe(replace("./css/normalize.css", "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"))
         .pipe(replace("./js/template7.min.js", "https://cdnjs.cloudflare.com/ajax/libs/template7/1.3.1/template7.min.js"))
         .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
@@ -153,6 +154,7 @@ gulp.task("dist-file-copy", (cb) => {
 
     // CSS
     css = gulp.src("./temp/css/style.min.css")
+        .pipe(replace("@font-face{font-family:\"Josefin Sans\";src:url(\"../fonts/Josefin_Sans/JosefinSans-Light.ttf\"),url(\"../fonts/Josefin_Sans/JosefinSans-Thin.ttf\")}", ""))
         .pipe(gulp.dest("./dist/css/")),
 
     // JS

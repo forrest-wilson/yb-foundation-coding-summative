@@ -69,9 +69,16 @@ gulp.task("local-file-copy", () => {
 
     // Favicon
     favicon = gulp.src("./src/favicon.png")
-        .pipe(gulp.dest("./temp/"));
+        .pipe(gulp.dest("./temp/")),
 
-    return merge(jQ, normalize, json, img, fonts, template7, favicon);
+    // Font-awesome
+    faCSS = gulp.src("./node_modules/font-awesome/css/font-awesome.min.css")
+        .pipe(gulp.dest("./temp/css/")),
+
+    faFont = gulp.src("./node_modules/font-awesome/fonts/*.*")
+        .pipe(gulp.dest("./temp/fonts/"));
+
+    return merge(jQ, normalize, json, img, fonts, template7, favicon, faCSS, faFont);
 });
 
 // Copies the HTML files
@@ -135,6 +142,7 @@ gulp.task("html-replace", () => {
         .pipe(replace("./css/normalize.css", "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"))
         .pipe(replace("./js/template7.min.js", "https://cdnjs.cloudflare.com/ajax/libs/template7/1.3.1/template7.min.js"))
         .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
+        .pipe(replace("./css/font-awesome.min.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"))
         .pipe(gulp.dest("./dist/"));
 });
 

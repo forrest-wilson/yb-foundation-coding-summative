@@ -2,6 +2,7 @@ const gulp = require("gulp"),
     clean = require("gulp-clean"),
     sourcemaps = require("gulp-sourcemaps");
     sass = require("gulp-sass"),
+    autoprefixer = require("gulp-autoprefixer"),
     babel = require("gulp-babel"),
     uglify = require("gulp-uglify"),
     rename = require("gulp-rename"),
@@ -25,6 +26,9 @@ gulp.task("sass", () => {
             outputStyle: "compressed"
         })
         .on("error", sass.logError))
+        .pipe(autoprefixer({
+            browsers: ["last 2 versions"]
+        }))
         .pipe(rename("style.min.css"))
         .pipe(sourcemaps.write(""))
         .pipe(gulp.dest("./temp/css/"));

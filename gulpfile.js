@@ -5,12 +5,15 @@ const gulp = require("gulp"),
     babel = require("gulp-babel"),
     uglify = require("gulp-uglify"),
     rename = require("gulp-rename"),
+    htmlmin = require("gulp-htmlmin"),
+    replace = require("gulp-replace"),
     browserSync = require("browser-sync").create(),
+    merge = require("merge-stream"),
     runSequence = require("run-sequence");
 
-// Cleans the dist directory
+// Cleans the temp directory
 gulp.task("clean", () => {
-    return gulp.src("./dist/", { read: false })
+    return gulp.src("./temp/", { read: false })
         .pipe(clean());
 });
 
@@ -19,12 +22,12 @@ gulp.task("sass", () => {
     return gulp.src("./src/sass/*.scss")
         .pipe(sourcemaps.init())
         .pipe(sass({
-            outputStyle: 'compressed'
+            outputStyle: "compressed"
         })
         .on("error", sass.logError))
         .pipe(rename("style.min.css"))
         .pipe(sourcemaps.write(""))
-        .pipe(gulp.dest("./dist/css/"));
+        .pipe(gulp.dest("./temp/css/"));
 });
 
 // ES5 to ES6 Compiler
@@ -35,47 +38,57 @@ gulp.task("babel", () => {
         }))
         .pipe(uglify())
         .pipe(rename("app.min.js"))
-        .pipe(gulp.dest("./dist/js/"));
+        .pipe(gulp.dest("./temp/js/"));
 });
 
 // Copies the local dependancy files
 gulp.task("local-file-copy", () => {
     // jQuery
-    gulp.src("./node_modules/jquery/dist/jquery.min.js")
-        .pipe(gulp.dest("./dist/js/"));
+    const jQ = gulp.src("./node_modules/jquery/dist/jquery.min.js")
+        .pipe(gulp.dest("./temp/js/")),
 
     // Normalize.css
-    gulp.src("./node_modules/normalize.css/normalize.css")
-        .pipe(gulp.dest("./dist/css/"));
+    normalize = gulp.src("./node_modules/normalize.css/normalize.css")
+        .pipe(gulp.dest("./temp/css/")),
 
     // JSON Data
-    gulp.src("./src/json/*.json")
-        .pipe(gulp.dest("./dist/json/"));
+    json = gulp.src("./src/json/*.json")
+        .pipe(gulp.dest("./temp/json/")),
 
     // Images
-    gulp.src("./src/img/*.*")
-        .pipe(gulp.dest("./dist/img/"));
+    img = gulp.src("./src/img/*.*")
+        .pipe(gulp.dest("./temp/img/")),
 
     // Fonts
-    gulp.src("./src/fonts/**/*.*")
-        .pipe(gulp.dest("./dist/fonts/"));
+    fonts = gulp.src("./src/fonts/**/*.*")
+        .pipe(gulp.dest("./temp/fonts/")),
 
     // Template7
-    gulp.src("./node_modules/template7/dist/template7.min.js")
-        .pipe(gulp.dest("./dist/js/"));
+    template7 = gulp.src("./node_modules/template7/dist/template7.min.js")
+        .pipe(gulp.dest("./temp/js/")),
+
+    // Favicon
+    favicon = gulp.src("./src/favicon.png")
+        .pipe(gulp.dest("./temp/"));
+
+    return merge(jQ, normalize, json, img, fonts, template7, favicon);
 });
 
 // Copies the HTML files
-gulp.task("html-copy", () => {
+gulp.task("html-min", () => {
     return gulp.src("./src/*.html")
-        .pipe(gulp.dest("./dist/"));
+        .pipe(htmlmin({
+            collapseWhitespace: true,
+            removeComments: true
+        }))
+        .pipe(gulp.dest("./temp/"));
 });
 
 // Configures the BrowserSync NPM module
 gulp.task("browser-sync", () => {
     browserSync.init({
         server: {
-            baseDir: "dist", // Where the server will start from
+            baseDir: "temp", // Where the server will start from
             index: "index.html" // Default file to load
         },
         port: 3000, // Default localhost port
@@ -89,19 +102,66 @@ gulp.task("browser-sync", () => {
 
 // Reloads the browser
 gulp.task("reload-browser", () => {
-    return gulp.src("./dist/")
+    return gulp.src("./temp/")
         .pipe(browserSync.reload({
             stream: true
         }));
 });
 
-// Task that builds the dist folder
-gulp.task("build", (cb) => {
-    runSequence("clean", "sass", "babel", "local-file-copy", "html-copy", "reload-browser", cb);
+// Task that builds the temp folder
+gulp.task("build:temp", (cb) => {
+    runSequence("clean", "sass", "babel", "local-file-copy", "html-min", "reload-browser", cb);
 });
 
 // Task that watches all files for changes and runs
 // the build task when a file is changed
-gulp.task("start", ["build", "browser-sync"], (cb) => {
-    gulp.watch("./src/**/*.*", ["build"], cb);
+gulp.task("start", ["build:temp", "browser-sync"], (cb) => {
+    gulp.watch("./src/**/*.*", ["build:temp"], cb);
+});
+
+//////////////////////////////////
+//// BUILDING THE DIST FOLDER ////
+//////////////////////////////////
+
+// Cleans the dist directory
+gulp.task("clean-dist", () => {
+    return gulp.src("./dist/", { read: false })
+        .pipe(clean());
+});
+
+gulp.task("html-replace", () => {
+    return gulp.src("./temp/*.html")
+        .pipe(replace("./css/normalize.css", "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"))
+        .pipe(replace("./js/template7.min.js", "https://cdnjs.cloudflare.com/ajax/libs/template7/1.3.1/template7.min.js"))
+        .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
+        .pipe(gulp.dest("./dist/"));
+});
+
+// Copies the local dependancy files
+gulp.task("dist-file-copy", (cb) => {
+    // JSON Data
+    const json = gulp.src("./temp/json/*.json")
+        .pipe(gulp.dest("./dist/json/")),
+
+    // Images
+    img = gulp.src("./temp/img/**/*.*")
+        .pipe(gulp.dest("./dist/img/")),
+
+    // Favicon
+    favicon = gulp.src("./temp/favicon.png")
+        .pipe(gulp.dest("./dist/")),
+
+    // CSS
+    css = gulp.src("./temp/css/style.min.css")
+        .pipe(gulp.dest("./dist/css/")),
+
+    // JS
+    js = gulp.src("./temp/js/app.min.js")
+        .pipe(gulp.dest("./dist/js/"));
+
+    return merge(json, img, favicon, css, js);
+});
+
+gulp.task("build:dist", (cb) => {
+    runSequence("build:temp", "clean-dist", "html-replace", "dist-file-copy", cb);
 });

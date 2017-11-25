@@ -14,7 +14,7 @@ Run the following command in terminal/command line
 npm install
 ```
 
-## Building the dist folder and local production server
+## Building the temp folder for local production
 
 ### Mac
 
@@ -30,4 +30,22 @@ Run the following command in the command line
 
 ```
 gulp start
+```
+
+## Building the distribution folder for a live server
+
+### Mac
+
+Run the following command in terminal
+
+```
+npm run build
+```
+
+### PC
+
+Run the following command in the command line
+
+```
+gulp build
 ```

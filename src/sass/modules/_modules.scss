@@ -5,6 +5,7 @@
 .header {
     @include positioning(fixed, 0px, $l: 0px, $r: 0px);
     height: 50px;
+    z-index: 100;
 
     .how-to-text {
         @include positioning(absolute, $r: 0px);

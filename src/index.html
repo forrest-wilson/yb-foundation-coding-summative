@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" href="./css/normalize.css">
     <link href='https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css' rel='stylesheet' />
+    <link rel="stylesheet" href="./css/font-awesome.min.css">
     <link rel="stylesheet" href="./css/style.min.css">
 
     <!-- Template7 Script required to be at the top -->
@@ -26,12 +27,54 @@
     </header>
 
     <main id="main" class="main">
-        <!-- <section>
-            <img src="./img/placeholder-bg.jpg" alt="Placeholder Background">
-        </section> -->
+        <!-- Opaque Overlay -->
+        <div class="background-overlay">
+            <img src="img/placeholder-bg.jpg" alt="Background">
+            <div class="opaque-overlay"></div>
+        </div>
 
-        <section id="map" class="map"></section>
+        <!-- Mapbox Div -->
+        <div id="map" class="map"></div>
+
+        <!-- Main Sections Start -->
+        <section class="section section-one">
+            <div class="inner">
+                <div class="content">
+                    <h1 class="center">Wayfindr</h1>
+                    <h2 class="center">A Simple Journey Planner</h2>
+                    <p class="center tag-line">Click the button below to start planning your journey!</p>
+                </div>
+
+                <div class="actions">
+                    <button id="startButton" class="btn btn-style-dark next-button">Click Me!</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-two">
+            <div class="inner">
+                <!-- <div class="actions">
+                    <button id="startButton" class="btn-style-dark next-button">Click Me!</button>
+                </div> -->
+            </div>
+        </section>
     </main>
+
+    <!-- Overlays -->
+    <div id="mask" class="mask"></div>
+
+    <div id="howDoIWorkPopup" class="how-do-i-work-popup inner">
+        <div class="inner">
+            <i id="howDoIWorkPopupClose" class="fa fa-close close-button"></i>
+            <h1>How do I work?</h1>
+            <p>Hi there! I see you want to know how this application works. The TL;DR is enter some info, click some buttons and *poof*, we'll recommend the perfect options for your travels!</p>
+            <p>A more 'technical' version of the above is:</p>
+            <p>1. Enter the route you would like to take.</p>
+            <p>2. Enter how many people are coming along on this journey.</p>
+            <p>3. Enter the number of days you'd like this vehicle for.</p>
+            <p>4. Select your preferred vehicle from the provided options.</p>
+        </div>
+    </div>
 
     <script src="./js/jquery.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js"></script>

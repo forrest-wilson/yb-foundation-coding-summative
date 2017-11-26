@@ -102,9 +102,7 @@ $(document).ready(() => {
         
         setTimeout(() => {
             elToShow.style.transition = transitionTime + "ms";
-            elToShow.style.visibility = "visible";
-            elToShow.style.opacity = 1;
-            elToShow.style.transform = "scale(1)";
+            showFormPage(idToShow);
         });
     }
 

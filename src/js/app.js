@@ -134,9 +134,24 @@ $(document).ready(() => {
         showNextPage("sectionTwo", "sectionOne");
     });
 
+    $("#sectionTwoButtonNext").click((e) => {
+        e.preventDefault();
+        showNextPage("sectionThree", "sectionTwo");
+    });
+
     $("#sectionTwoButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionOne", "sectionTwo");
+    });
+
+    $("#sectionThreeButtonNext").click((e) => {
+        e.preventDefault();
+        showNextPage("sectionFour", "sectionThree");
+    });
+
+    $("#sectionThreeButtonBack").click((e) => {
+        e.preventDefault();
+        showPreviousPage("sectionTwo", "sectionThree");
     });
 
     // Window Resize Handler

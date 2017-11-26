@@ -6,7 +6,8 @@ $(document).ready(() => {
     // Immutable variables
     const carsJsonUrl = "../json/vehicleInfo.json",
         nzCenter = [172.5, -41.278919],
-        transitionSpeed = 400;
+        transitionTime = 400,
+        scaleFactor = 2;
 
     // Mutable variables
     let $windowHeight = $(window).height(),
@@ -17,6 +18,11 @@ $(document).ready(() => {
     //// Function Declarations ////
     ///////////////////////////////
 
+    // Functions to be called on page load are in this IIFE
+    (() => {
+        showFormPage("sectionOne");
+    })();
+
     function updateScreenDimensions() {
         $windowHeight = $(window).height();
         $windowWidth = $(window).width();
@@ -25,14 +31,81 @@ $(document).ready(() => {
 
     function toggleHowDoIWorkOverlay() {
         if (howDoIWorkOverlayShowing) {
-            $("#mask").fadeOut(transitionSpeed);
-            $("#howDoIWorkPopup").fadeOut(transitionSpeed);
+            $("#mask").fadeOut(transitionTime);
+            $("#howDoIWorkPopup").fadeOut(transitionTime);
             howDoIWorkOverlayShowing = false;
         } else {
-            $("#mask").fadeIn(transitionSpeed);
-            $("#howDoIWorkPopup").fadeIn(transitionSpeed);
+            $("#mask").fadeIn(transitionTime);
+            $("#howDoIWorkPopup").fadeIn(transitionTime);
             howDoIWorkOverlayShowing = true;
         }
+    }
+
+    function showFormPage(id) {
+        let elToShow = document.getElementById(id);
+
+        elToShow.style.visibility = "visible";
+        elToShow.style.opacity = 1.0;
+        elToShow.style.transform = "scale(1)";
+    }
+
+    function showNextPage(idToShow, idToHide) {
+        let elToShow = document.getElementById(idToShow);
+        let elToHide = document.getElementById(idToHide);
+
+        // idToHide has to scale up and fade out
+            // scale(scaleFactor) and opacity: 0
+
+        elToHide.style.transform = "scale(" + scaleFactor + ")";
+        elToHide.style.opacity = 0;
+
+        // set a timeout so the visibility can be set to hidden
+            // scale(0)
+
+        setTimeout(() => {
+            elToHide.style.visibility = "hidden";
+            elToHide.style.transform = "scale(0)";
+        }, transitionTime);
+
+        // idToShow scale set to 0
+        // "" visibility has to be set to visible
+        // "" opacity has to be set to 1
+        // timeout "" scale set to 1
+
+        elToShow.style.visibility = "visible";
+        elToShow.style.opacity = 1;
+        elToShow.style.transform = "scale(1)";
+    }
+
+    function showPreviousPage(idToShow, idToHide) {
+        let elToShow = document.getElementById(idToShow);
+        let elToHide = document.getElementById(idToHide);
+
+        // elToHide opacity to 0
+        // "" scale to 0
+        // "" timeout visibility to hidden
+
+        elToHide.style.opacity = 0;
+        elToHide.style.transform = "scale(0)";
+
+        setTimeout(() => {
+            elToHide.style.visibility = "hidden";
+        }, transitionTime);
+
+        // elToShow transition speed to 0ms
+        // "" visibility to visible
+        // "" opacity 1
+        // "" scale 1
+
+        elToShow.style.transition = "0ms";
+        elToShow.style.transform = "scale(" + scaleFactor + ")";
+        
+        setTimeout(() => {
+            elToShow.style.transition = transitionTime + "ms";
+            elToShow.style.visibility = "visible";
+            elToShow.style.opacity = 1;
+            elToShow.style.transform = "scale(1)";
+        });
     }
 
     ////////////////////////
@@ -44,24 +117,28 @@ $(document).ready(() => {
     //
 
     // "How to" event listeners
+
     $("#howToText").click((e) => {
         e.preventDefault();
         toggleHowDoIWorkOverlay();
     });
 
     $("#howDoIWorkPopupClose").click((e) => {
+        e.preventDefault();
         toggleHowDoIWorkOverlay();
     });
 
-    // Section fade in/out handlers
-    $("#sectionOneButton").click(() => {
-        $("#sectionOne").addClass("hidden");
-        $("#sectionTwo").show();
 
-        setTimeout(() => {
-            $("#sectionOne").hide();
-            $("#sectionTwo").removeClass("hidden");
-        }, transitionSpeed);
+    // Form Presentation Buttons
+
+    $("#sectionOneButton").click((e) => {
+        e.preventDefault();
+        showNextPage("sectionTwo", "sectionOne");
+    });
+
+    $("#sectionTwoButtonBack").click((e) => {
+        e.preventDefault();
+        showPreviousPage("sectionOne", "sectionTwo");
     });
 
     // Window Resize Handler

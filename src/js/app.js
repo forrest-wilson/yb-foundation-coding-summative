@@ -139,6 +139,11 @@ $(document).ready(() => {
         showPreviousPage("sectionTwo", "sectionThree");
     });
 
+    $("#sectionFourButtonBack").click((e) => {
+        e.preventDefault();
+        showPreviousPage("sectionThree", "sectionFour");
+    });
+
     //
     // Window Resize Handler
     //

@@ -52,7 +52,7 @@ $(document).ready(() => {
         setTimeout(() => {
             elToShow.style.opacity = 1.0;
             elToShow.style.transform = "scale(1)";
-        }, 10);
+        }, 50);
     }
 
     // Shows the next page and hides the current page

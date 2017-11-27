@@ -61,7 +61,7 @@
                 }
             }
 
-            .btn {
+            .fixed-btn {
                 @include positioning(fixed, $b: 10px);
                 width: calc(50% - 15px);
             }

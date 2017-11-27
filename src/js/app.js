@@ -112,7 +112,6 @@ $(document).ready(() => {
         toggleHowDoIWorkOverlay();
     });
 
-
     // Form Presentation Buttons
 
     $("#sectionOneButton").click((e) => {
@@ -140,7 +139,9 @@ $(document).ready(() => {
         showPreviousPage("sectionTwo", "sectionThree");
     });
 
+    //
     // Window Resize Handler
+    //
 
     $(window).on("resize", () => {
         updateScreenDimensions();

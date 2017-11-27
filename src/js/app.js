@@ -23,12 +23,14 @@ $(document).ready(() => {
         showFormPage("sectionOne");
     })();
 
+    // Updates the global screen dimension variables
     function updateScreenDimensions() {
         $windowHeight = $(window).height();
         $windowWidth = $(window).width();
         console.log("Screen size changed: H:", $windowHeight, "W:", $windowWidth);
     }
 
+    // Toggles the how do i work overlay
     function toggleHowDoIWorkOverlay() {
         if (howDoIWorkOverlayShowing) {
             $("#mask").fadeOut(transitionTime);
@@ -41,6 +43,7 @@ $(document).ready(() => {
         }
     }
 
+    // Shows a form page depending on what id is passed to it
     function showFormPage(id) {
         let elToShow = document.getElementById(id);
 
@@ -52,39 +55,26 @@ $(document).ready(() => {
         }, 10);
     }
 
+    // Shows the next page and hides the current page
     function showNextPage(idToShow, idToHide) {
         let elToShow = document.getElementById(idToShow);
         let elToHide = document.getElementById(idToHide);
 
-        // idToHide has to scale up and fade out
-            // scale(scaleFactor) and opacity: 0
-
         elToHide.style.transform = "scale(" + scaleFactor + ")";
         elToHide.style.opacity = 0;
-
-        // set a timeout so the visibility can be set to hidden
-            // scale(0)
 
         setTimeout(() => {
             elToHide.style.display = "none";
             elToHide.style.transform = "scale(0)";
         }, transitionTime);
 
-        // idToShow scale set to 0
-        // "" visibility has to be set to visible
-        // "" opacity has to be set to 1
-        // timeout "" scale set to 1
-
         showFormPage(idToShow);
     }
 
+    // Shows the previous page and hides the current page
     function showPreviousPage(idToShow, idToHide) {
         let elToShow = document.getElementById(idToShow);
         let elToHide = document.getElementById(idToHide);
-
-        // elToHide opacity to 0
-        // "" scale to 0
-        // "" timeout visibility to hidden
 
         elToHide.style.opacity = 0;
         elToHide.style.transform = "scale(0)";
@@ -92,11 +82,6 @@ $(document).ready(() => {
         setTimeout(() => {
             elToHide.style.display = "none";
         }, transitionTime);
-
-        // elToShow transition speed to 0ms
-        // "" visibility to visible
-        // "" opacity 1
-        // "" scale 1
 
         elToShow.style.transition = "0ms";
         elToShow.style.transform = "scale(" + scaleFactor + ")";

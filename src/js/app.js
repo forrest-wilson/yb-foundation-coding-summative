@@ -165,4 +165,8 @@ $(document).ready(() => {
         zoom: 4.5,
         interactive: false
     });
+
+    map.addControl(new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken
+    }));
 });

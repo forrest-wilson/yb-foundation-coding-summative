@@ -44,9 +44,12 @@ $(document).ready(() => {
     function showFormPage(id) {
         let elToShow = document.getElementById(id);
 
-        elToShow.style.visibility = "visible";
-        elToShow.style.opacity = 1.0;
-        elToShow.style.transform = "scale(1)";
+        elToShow.style.display = "block";
+
+        setTimeout(() => {
+            elToShow.style.opacity = 1.0;
+            elToShow.style.transform = "scale(1)";
+        }, 10);
     }
 
     function showNextPage(idToShow, idToHide) {
@@ -63,7 +66,7 @@ $(document).ready(() => {
             // scale(0)
 
         setTimeout(() => {
-            elToHide.style.visibility = "hidden";
+            elToHide.style.display = "none";
             elToHide.style.transform = "scale(0)";
         }, transitionTime);
 
@@ -72,9 +75,7 @@ $(document).ready(() => {
         // "" opacity has to be set to 1
         // timeout "" scale set to 1
 
-        elToShow.style.visibility = "visible";
-        elToShow.style.opacity = 1;
-        elToShow.style.transform = "scale(1)";
+        showFormPage(idToShow);
     }
 
     function showPreviousPage(idToShow, idToHide) {
@@ -89,7 +90,7 @@ $(document).ready(() => {
         elToHide.style.transform = "scale(0)";
 
         setTimeout(() => {
-            elToHide.style.visibility = "hidden";
+            elToHide.style.display = "none";
         }, transitionTime);
 
         // elToShow transition speed to 0ms

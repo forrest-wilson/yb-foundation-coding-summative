@@ -68,10 +68,11 @@
 }
 
 .form-section {
-    visibility: hidden;
+    // visibility: hidden;
     opacity: 0;
     transform: scale(0);
     transition: 400ms;
+    display: none;
 }
 
 .how-do-i-work-popup {

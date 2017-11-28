@@ -208,8 +208,8 @@ $(document).ready(() => {
 
         document.getElementById(id).appendChild(geocoder.onAdd(map));
 
-        let a = document.getElementsByClassName("mapboxgl-ctrl-top-right");
-        a[0].removeChild(a[0].children[0]);
+        let ctrlEl = document.getElementsByClassName("mapboxgl-ctrl-top-right");
+        ctrlEl[0].removeChild(ctrlEl[0].children[0]);
 
         geocoder.on("result", (e) => {
             console.log("Event", e);

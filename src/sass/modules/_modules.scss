@@ -35,19 +35,23 @@
                     transform: translateX(-50%) translateY(-50%);
                     width: 100%;
 
-                    .place-input {
-                        padding: 10px;
-                        width: 100%;
+                    .mapboxgl-ctrl-geocoder {
+                        margin: 0 auto;
                         background: none;
-                        border: 0;
-    
-                        &::-webkit-input-placeholder {
+
+                        input {
+                            padding: 10px 40px;
+                            text-align: center;
                             color: white;
-                            opacity: 0.75;
+
+                            &::-webkit-input-placeholder {
+                                color: white;
+                                opacity: 0.75;
+                            }
                         }
-    
-                        &:focus {
-                            outline: 0;
+
+                        .suggestions {
+                            background-color: transparent;
                         }
                     }
 
@@ -120,6 +124,12 @@
     transform: scale(0);
     transition: 400ms;
     display: none;
+
+    .another-stop {
+        padding: 10px 20px;
+        display: block;
+        cursor: pointer;
+    }
 }
 
 .how-do-i-work-popup {

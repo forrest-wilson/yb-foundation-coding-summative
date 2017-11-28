@@ -22,7 +22,7 @@ $(document).ready(() => {
 
     // Functions to be called on page load are in this IIFE
     (() => {
-        showFormPage("sectionOne");
+        showFormPage("sectionThree");
     })();
 
     // Updates the global screen dimension variables
@@ -134,7 +134,11 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
-        showNextPage("sectionThree", "sectionTwo");
+        if (mapPoints.origin) {
+            showNextPage("sectionThree", "sectionTwo");
+        } else {
+            console.log("Not ready");
+        }
     });
 
     $("#sectionTwoButtonBack").click((e) => {
@@ -151,6 +155,11 @@ $(document).ready(() => {
     $("#sectionThreeButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionTwo", "sectionThree");
+    });
+
+    $("#anotherStop").click((e) => {
+        e.preventDefault();
+        addGeocoder("waypointWrapper", map, "Something");
     });
 
     $("#sectionFourButtonBack").click((e) => {
@@ -180,23 +189,36 @@ $(document).ready(() => {
         interactive: false
     });
 
-    let directions = new MapboxDirections({
-        accessToken: mapboxgl.accessToken,
-        units: "metric"
-    });
+    console.log("Map", map);
 
-    let geocoder = new MapboxGeocoder({
-        accessToken: mapboxgl.accessToken
-    });
+    // let directions = new MapboxDirections({
+    //     accessToken: mapboxgl.accessToken,
+    //     units: "metric"
+    // });
 
-    map.addControl(geocoder);
-    
-    // Appends the geocoder to the origin ID
-    $(".mapboxgl-ctrl-geocoder").appendTo("#origin");
+    function addGeocoder(id, map, placeholder) {
+        let geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            country: "NZ", // Limits searches to NZ
+            limit: 5,
+            placeholder: placeholder
+        });
 
-    geocoder.on("result", (e) => {
-        console.log(e);
-        mapPoints.origin = e.result.geometry.coordinates;
-        console.log(mapPoints);
-    });
+        map.addControl(geocoder);
+
+        document.getElementById(id).appendChild(geocoder.onAdd(map));
+
+        let a = document.getElementsByClassName("mapboxgl-ctrl-top-right");
+        a[0].removeChild(a[0].children[0]);
+
+        geocoder.on("result", (e) => {
+            console.log("Event", e);
+            mapPoints[id] = e.result.geometry.coordinates;
+            console.log("Map Points", mapPoints);
+        });
+    }
+
+    addGeocoder("origin", map, "Please enter a start point");
+    addGeocoder("waypoints", map, "Please enter a stop");
+    addGeocoder("destination", map, "Please enter your destination");
 });

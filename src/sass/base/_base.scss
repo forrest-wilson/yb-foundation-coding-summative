@@ -27,6 +27,10 @@ h1 {
     font-size: 48px;
 }
 
+h3 {
+    font-size: 12px;
+}
+
 button {
     border: none;
     border-radius: $borderRadius;
@@ -46,6 +50,10 @@ button {
         background: linear-gradient(to bottom right, $primaryGradTwo, $primaryGradOne);
         box-shadow: $boxShadowDark;
     }
+}
+
+input {
+    font-size: 16px!important; // Is being overwritten by the mapbox-gl-directions.css file
 }
 
 // Classes

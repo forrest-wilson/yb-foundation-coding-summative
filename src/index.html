@@ -56,7 +56,6 @@
                     <h2 class="center">Where would you like to begin your journey?</h2>
 
                     <div id="origin" class="input-wrapper">
-                        <input type="text" class="place-input center" placeholder="Please enter a start point">
                         <span class="underline"></span>
                     </div>
                 </div>
@@ -70,11 +69,12 @@
             <div class="inner">
                 <div class="content">
                     <h2 class="center">Any stops along the way?</h2>
+                    <h3 class="center">(This step is optional so you can skip it if you'd like)</h3>
 
-                    <div class="input-wrapper">
-                        <input type="text" class="place-input center" placeholder="Please enter a stop">
+                    <div id="waypoints" class="input-wrapper">
+                        <div id="waypointWrapper"></div>
                         <span class="underline"></span>
-                        <!-- <button class="btn">Add another stop</button> -->
+                        <a id="anotherStop" class="center another-stop">+ Add another stop</a>
                     </div>
                 </div>
 
@@ -89,7 +89,6 @@
                     <h2 class="center">Where would you like to end your journey?</h2>
 
                     <div id="destination" class="input-wrapper">
-                        <input type="text" class="place-input center" placeholder="Please enter your destination">
                         <span class="underline"></span>
                     </div>
                 </div>

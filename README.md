@@ -24,14 +24,6 @@ Run the following command in terminal
 npm run start
 ```
 
-### PC
-
-Run the following command in the command line
-
-```
-gulp start
-```
-
 ## Building the distribution folder for a live server
 
 ### Mac
@@ -40,12 +32,4 @@ Run the following command in terminal
 
 ```
 npm run build
-```
-
-### PC
-
-Run the following command in the command line
-
-```
-gulp build
 ```

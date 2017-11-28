@@ -16,8 +16,6 @@ npm install
 
 ## Building the temp folder for local production
 
-### Mac
-
 Run the following command in terminal
 
 ```
@@ -25,8 +23,6 @@ npm run start
 ```
 
 ## Building the distribution folder for a live server
-
-### Mac
 
 Run the following command in terminal
 

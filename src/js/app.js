@@ -22,7 +22,7 @@ $(document).ready(() => {
 
     // Functions to be called on page load are in this IIFE
     (() => {
-        showFormPage("sectionOne");
+        showFormPage("sectionThree");
     })();
 
     // Updates the global screen dimension variables
@@ -159,7 +159,7 @@ $(document).ready(() => {
 
     $("#anotherStop").click((e) => {
         e.preventDefault();
-        addGeocoder("waypointWrapper", map, "Something");
+        addGeocoder("waypoints", map, "Please enter a stop");
     });
 
     $("#sectionFourButtonBack").click((e) => {
@@ -197,27 +197,31 @@ $(document).ready(() => {
     // });
 
     function addGeocoder(id, map, placeholder) {
+        // Instantiates a new instance of MapboxGeocoder
         let geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             country: "NZ", // Limits searches to NZ
             limit: 5,
             placeholder: placeholder
-        });
+        }),
+            ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
 
+        // Adds the control to the map. Might be able to add to any element
         map.addControl(geocoder);
 
+        // Copys the geocoder to custom DOM element
         document.getElementById(id).appendChild(geocoder.onAdd(map));
 
-        let ctrlEl = document.getElementsByClassName("mapboxgl-ctrl-top-right");
-        ctrlEl[0].removeChild(ctrlEl[0].children[0]);
-
+        // Removes the original mapboxgl controls from the map as they duplicate
+        ctrlEls[0].removeChild(ctrlEls[0].children[0]);
+        
         geocoder.on("result", (e) => {
-            console.log("Event", e);
             mapPoints[id] = e.result.geometry.coordinates;
             console.log("Map Points", mapPoints);
         });
     }
 
+    // Calling the initial geocoder setup. Move to the IIFE for prod code
     addGeocoder("origin", map, "Please enter a start point");
     addGeocoder("waypoints", map, "Please enter a stop");
     addGeocoder("destination", map, "Please enter your destination");

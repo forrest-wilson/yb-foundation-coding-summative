@@ -13,7 +13,8 @@ $(document).ready(() => {
     let $windowHeight = $(window).height(),
         $windowWidth = $(window).width(),
         howDoIWorkOverlayShowing = false,
-        backgroundImageIsShowing = true;
+        backgroundImageIsShowing = true,
+        mapPoints = {};
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -184,17 +185,18 @@ $(document).ready(() => {
         units: "metric"
     });
 
-    // console.log("Directions", directions);
-
     let geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken
     });
 
     map.addControl(geocoder);
-
-    console.log("Geocoder", geocoder);
     
+    // Appends the geocoder to the origin ID
     $(".mapboxgl-ctrl-geocoder").appendTo("#origin");
 
-    console.log("map", map);
+    geocoder.on("result", (e) => {
+        console.log(e);
+        mapPoints.origin = e.result.geometry.coordinates;
+        console.log(mapPoints);
+    });
 });

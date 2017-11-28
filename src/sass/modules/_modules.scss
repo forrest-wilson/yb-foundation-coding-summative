@@ -97,7 +97,6 @@
 
     .map {
         @include positioning(fixed, 0, 0, 0, 0);
-        // z-index: 200; // Remove this line for prod
     }
 
     .background-overlay {

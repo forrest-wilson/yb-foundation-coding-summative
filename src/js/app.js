@@ -22,7 +22,7 @@ $(document).ready(() => {
 
     // Functions to be called on page load are in this IIFE
     (() => {
-        showFormPage("sectionThree");
+        showFormPage("sectionOne");
     })();
 
     // Updates the global screen dimension variables

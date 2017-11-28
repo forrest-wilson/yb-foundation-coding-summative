@@ -97,6 +97,7 @@
 
     .map {
         @include positioning(fixed, 0, 0, 0, 0);
+        // z-index: 200; // Remove this line for prod
     }
 
     .background-overlay {
@@ -110,7 +111,7 @@
         .opaque-overlay {
             @include positioning(absolute, 0, 0, 0, 0);
             background: linear-gradient(to bottom right, $primaryGradOne, $primaryGradTwo);
-            opacity: 0.85;
+            opacity: 0.65;
         }
     }
 }

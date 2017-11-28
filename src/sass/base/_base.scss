@@ -54,10 +54,6 @@ button {
     padding: 10px;
 }
 
-.map {
-    display: none;
-}
-
 .mask {
     @include positioning(fixed, 0, 0, 0, 0);
     background: rgba(22, 22, 22, 0.6);

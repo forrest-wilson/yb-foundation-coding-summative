@@ -15,7 +15,7 @@
 
     <link rel="stylesheet" href="./css/normalize.css">
     <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.css">
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.css" type="text/css">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.css" type="text/css">
     <link rel="stylesheet" href="./css/font-awesome.min.css">
     <link rel="stylesheet" href="./css/style.min.css">
 
@@ -30,7 +30,7 @@
     <main id="main" class="main">
         <!-- Opaque Overlay -->
         <div class="background-overlay">
-            <img src="img/placeholder-bg.jpg" alt="Background">
+            <img id="backgroundImage" src="img/placeholder-bg.jpg" alt="Background">
             <div class="opaque-overlay"></div>
         </div>
 
@@ -55,7 +55,7 @@
                 <div class="content">
                     <h2 class="center">Where would you like to begin your journey?</h2>
 
-                    <div class="input-wrapper">
+                    <div id="origin" class="input-wrapper">
                         <input type="text" class="place-input center" placeholder="Please enter a start point">
                         <span class="underline"></span>
                     </div>
@@ -88,7 +88,7 @@
                 <div class="content">
                     <h2 class="center">Where would you like to end your journey?</h2>
 
-                    <div class="input-wrapper">
+                    <div id="destination" class="input-wrapper">
                         <input type="text" class="place-input center" placeholder="Please enter your destination">
                         <span class="underline"></span>
                     </div>
@@ -118,6 +118,7 @@
 
     <script src="./js/jquery.min.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v0.42.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-directions/v3.1.1/mapbox-gl-directions.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.1/mapbox-gl-geocoder.min.js"></script>
     <script src="./js/app.min.js"></script>
 </body>

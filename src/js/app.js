@@ -5,14 +5,15 @@ $(document).ready(() => {
 
     // Immutable variables
     const carsJsonUrl = "../json/vehicleInfo.json",
-        nzCenter = [172.5, -41.278919],
+        nzCenter = [172.5, -41.278919], // Center coordinates for NZ
         transitionTime = 400,
         scaleFactor = 2;
 
     // Mutable variables
     let $windowHeight = $(window).height(),
         $windowWidth = $(window).width(),
-        howDoIWorkOverlayShowing = false;
+        howDoIWorkOverlayShowing = false,
+        backgroundImageIsShowing = true;
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -40,6 +41,16 @@ $(document).ready(() => {
             $("#mask").fadeIn(transitionTime);
             $("#howDoIWorkPopup").fadeIn(transitionTime);
             howDoIWorkOverlayShowing = true;
+        }
+    }
+
+    function toggleBackgroundImage() {
+        if (backgroundImageIsShowing) {
+            $("#backgroundImage").fadeOut(transitionTime);
+            backgroundImageIsShowing = false;
+        } else {
+            $("#backgroundImage").fadeIn(transitionTime);
+            backgroundImageIsShowing = true;
         }
     }
 
@@ -117,6 +128,7 @@ $(document).ready(() => {
     $("#sectionOneButton").click((e) => {
         e.preventDefault();
         showNextPage("sectionTwo", "sectionOne");
+        toggleBackgroundImage();
     });
 
     $("#sectionTwoButtonNext").click((e) => {
@@ -127,6 +139,7 @@ $(document).ready(() => {
     $("#sectionTwoButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionOne", "sectionTwo");
+        toggleBackgroundImage();
     });
 
     $("#sectionThreeButtonNext").click((e) => {
@@ -158,7 +171,7 @@ $(document).ready(() => {
 
     mapboxgl.accessToken = "pk.eyJ1IjoiZm9ycmVzdHdpbHNvbiIsImEiOiJjamFicGc4ejAwMmN0MnFxdWY3OGYyMW04In0.8hjX9IJyvPY_lkNdoaIBfw";
     
-    var map = new mapboxgl.Map({
+    let map = new mapboxgl.Map({
         container: "map", // Map div ID
         style: "mapbox://styles/mapbox/light-v9",
         center: nzCenter, // [lng, lat].
@@ -166,7 +179,22 @@ $(document).ready(() => {
         interactive: false
     });
 
-    map.addControl(new MapboxGeocoder({
+    let directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        units: "metric"
+    });
+
+    // console.log("Directions", directions);
+
+    let geocoder = new MapboxGeocoder({
         accessToken: mapboxgl.accessToken
-    }));
+    });
+
+    map.addControl(geocoder);
+
+    console.log("Geocoder", geocoder);
+    
+    $(".mapboxgl-ctrl-geocoder").appendTo("#origin");
+
+    console.log("map", map);
 });

@@ -4,17 +4,20 @@ $(document).ready(() => {
     ///////////////////////////////
 
     // Immutable variables
-    const carsJsonUrl = "../json/vehicleInfo.json",
-        nzCenter = [172.5, -41.278919], // Center coordinates for NZ
-        transitionTime = 400,
-        scaleFactor = 2;
+    const carsJsonUrl = "../json/vehicleInfo.json";
+    const nzCenter = [172.5, -41.278919]; // Center coordinates for NZ
+    const transitionTime = 400;
+    const scaleFactor = 2;
 
     // Mutable variables
-    let $windowHeight = $(window).height(),
-        $windowWidth = $(window).width(),
-        howDoIWorkOverlayShowing = false,
-        backgroundImageIsShowing = true,
-        mapPoints = {};
+    let $windowHeight = $(window).height();
+    let $windowWidth = $(window).width();
+    let howDoIWorkOverlayShowing = false;
+    let backgroundImageIsShowing = true;
+    let latestCoords = [];
+    let mapPoints = {
+        waypoints: []
+    };
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -140,10 +143,13 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
-        if (mapPoints != {}) {
+        if (latestCoords[0]) {
+            mapPoints.origin = latestCoords;
+            console.log(mapPoints);
             showNextPage("sectionThree", "sectionTwo");
+            clearWaypoints();
         } else {
-            console.log("Not ready");
+            console.log("Not a real place");
         }
     });
 
@@ -158,6 +164,12 @@ $(document).ready(() => {
     $("#sectionThreeButtonNext").click((e) => {
         e.preventDefault();
         showNextPage("sectionFour", "sectionThree");
+
+        let inputEls = document.getElementById("waypoints").children;
+        for (let i = 0; i < inputEls.length; i++) {
+            let val = inputEls[i].children[1].value;
+            getGeocodePoint(val);
+        }
     });
 
     $("#sectionThreeButtonBack").click((e) => {
@@ -172,18 +184,18 @@ $(document).ready(() => {
 
     // Section Four
 
+    $("#sectionFourButtonNext").click((e) => {
+        e.preventDefault();
+        mapPoints.destination = latestCoords;
+        console.log(mapPoints);
+        latestCoords = [];
+        getRoute(mapPoints.origin, mapPoints.destination, mapPoints.waypoints);
+    });
+
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionThree", "sectionFour");
-    });
-
-    $("#sectionFourButtonNext").click((e) => {
-        e.preventDefault();
-
-        directions.setOrigin([mapPoints.origin[0], mapPoints.origin[1]]);
-        directions.setDestination([mapPoints.destination[0], mapPoints.destination[1]]);
-
-        console.log(directions);
+        clearWaypoints();
     });
 
     //
@@ -205,7 +217,7 @@ $(document).ready(() => {
         style: "mapbox://styles/mapbox/light-v9",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
-        interactive: false
+        // interactive: false
     });
 
     function addGeocoder(id, map, placeholder) {
@@ -215,9 +227,9 @@ $(document).ready(() => {
             country: "NZ", // Limits searches to NZ
             limit: 5,
             placeholder: placeholder
-        }),
-            ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right"),
-            geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
+        });
+        const ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
+        const geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
 
         // Adds the control to the map. Might be able to add to any element
         map.addControl(geocoder);
@@ -225,15 +237,13 @@ $(document).ready(() => {
         // Copys the geocoder to custom DOM element
         document.getElementById(id).appendChild(geocoder.onAdd(map));
 
-        // console.dir(geocoder.onAdd(id));
-
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
         geocoder.on("result", (e) => {
             console.log(e);
-            mapPoints[id] = e.result.geometry.coordinates;
-            console.log("Map Points", mapPoints);
+            latestCoords = e.result.geometry.coordinates;
+            console.log("Latest Coordinates:", latestCoords);
         });
     }
 
@@ -253,7 +263,71 @@ $(document).ready(() => {
     });
 
     map.on("load", (e) => {
-        console.log(e);
-        map.addControl(directions);
+        // console.log("Map:", e);
     });
+
+    function getRoute(origin, dest, waypoints) {
+        let start = origin,
+            end = dest,
+            stops = waypoints,
+            request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
+        
+        for (let i = 0; i < waypoints.length; i++) {
+            request += waypoints[i][0] + "," + waypoints[i][1] + ";";
+        }
+        
+        request += end[0] + "," + end[1] + "?geometries=geojson&access_token=" + mapboxgl.accessToken;
+        $.ajax({
+            method: "GET",
+            url: request
+        }).done((data) => {
+            console.log("Data", data);
+            var route = data.routes[0].geometry;
+            map.addLayer({
+                id: "route",
+                type: "line",
+                source: {
+                    type: "geojson",
+                    data: {
+                        type: "Feature",
+                        geometry: route
+                    }
+                },
+                paint: {
+                    "line-width": 2
+                }
+            });
+
+            let pathCoordinates = data.routes[0].geometry.coordinates;
+
+            let bounds = pathCoordinates.reduce((bounds, coord) => {
+                return bounds.extend(coord);
+            }, new mapboxgl.LngLatBounds(pathCoordinates[0], pathCoordinates[0]));
+
+            map.fitBounds(bounds, {
+                padding: 100
+            });
+        });
+    }
+
+    function getGeocodePoint(queryString) {
+        let requestUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + queryString + ".json?geometries=geojson&access_token=" + mapboxgl.accessToken;
+
+        if (queryString !== "") {
+            $.ajax({
+                method: "GET",
+                url: requestUrl
+            }).done((data) => {
+                if (data.features[0].relevance === 1) {
+                    mapPoints.waypoints.push(data.features[0].geometry.coordinates);
+                }
+            });
+        } else {
+            console.log("Empty query string");
+        }
+    }
+
+    function clearWaypoints() {
+        mapPoints.waypoints = [];
+    }
 });

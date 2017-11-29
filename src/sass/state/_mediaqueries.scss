@@ -1,0 +1,29 @@
+////////////////////////////
+//// Media Queries SASS ////
+////////////////////////////
+
+// Width Queries
+
+@media screen and (min-width: 800px) {
+    .main {
+        .section {
+            .inner {
+                .content {
+                    .input-wrapper {
+                        max-width: 500px;
+                    }
+                }
+            }
+        }
+    }   
+}
+
+// Height Queries
+
+@media screen and (min-height: 600px) {
+    .how-do-i-work-popup {
+        @include positioning(fixed, $t: 50%!important, $b: auto!important, $l: 50%!important, $r: auto!important);
+        transform: translateX(-50%) translateY(-50%);
+        width: 100%;
+    }
+}

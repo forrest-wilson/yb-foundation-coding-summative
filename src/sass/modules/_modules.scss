@@ -159,6 +159,9 @@
         padding: 15px;
         border-radius: $borderRadius;
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
+        // @include positioning(absolute, 10px, 10px, 10px, 10px);
+        position: relative;
+        overflow: scroll;
 
         .close-button {
             font-size: 24px;

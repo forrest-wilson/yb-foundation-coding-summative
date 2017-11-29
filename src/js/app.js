@@ -22,6 +22,7 @@ $(document).ready(() => {
 
     // Functions to be called on page load are in this IIFE
     (() => {
+        // Present the initial page
         showFormPage("sectionOne");
     })();
 
@@ -139,7 +140,7 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
-        if (mapPoints.origin) {
+        if (mapPoints != {}) {
             showNextPage("sectionThree", "sectionTwo");
         } else {
             console.log("Not ready");
@@ -176,6 +177,15 @@ $(document).ready(() => {
         showPreviousPage("sectionThree", "sectionFour");
     });
 
+    $("#sectionFourButtonNext").click((e) => {
+        e.preventDefault();
+
+        directions.setOrigin([mapPoints.origin[0], mapPoints.origin[1]]);
+        directions.setDestination([mapPoints.destination[0], mapPoints.destination[1]]);
+
+        console.log(directions);
+    });
+
     //
     // Window Resize Handler
     //
@@ -198,11 +208,6 @@ $(document).ready(() => {
         interactive: false
     });
 
-    // let directions = new MapboxDirections({
-    //     accessToken: mapboxgl.accessToken,
-    //     units: "metric"
-    // });
-
     function addGeocoder(id, map, placeholder) {
         // Instantiates a new instance of MapboxGeocoder
         const geocoder = new MapboxGeocoder({
@@ -211,7 +216,8 @@ $(document).ready(() => {
             limit: 5,
             placeholder: placeholder
         }),
-            ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
+            ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right"),
+            geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
 
         // Adds the control to the map. Might be able to add to any element
         map.addControl(geocoder);
@@ -219,17 +225,35 @@ $(document).ready(() => {
         // Copys the geocoder to custom DOM element
         document.getElementById(id).appendChild(geocoder.onAdd(map));
 
+        // console.dir(geocoder.onAdd(id));
+
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
         geocoder.on("result", (e) => {
+            console.log(e);
             mapPoints[id] = e.result.geometry.coordinates;
             console.log("Map Points", mapPoints);
         });
     }
 
-    // Calling the initial geocoder setup. Move to the IIFE for prod code
+    // Calling the initial geocoder setup
     addGeocoder("origin", map, "Please enter a start point");
     addGeocoder("waypoints", map, "Please enter a stop");
     addGeocoder("destination", map, "Please enter your destination");
+
+    // Directions API
+    let directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        units: "metric",
+        controls: {
+            inputs: false,
+            instructions: false
+        }
+    });
+
+    map.on("load", (e) => {
+        console.log(e);
+        map.addControl(directions);
+    });
 });

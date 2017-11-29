@@ -40,7 +40,7 @@ gulp.task("babel", () => {
         .pipe(babel({
             presets: ["env"]
         }))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(rename("app.min.js"))
         .pipe(gulp.dest("./temp/js/"));
 });

@@ -51,7 +51,22 @@
                         }
 
                         .suggestions {
-                            background-color: transparent;
+                            background-color: rgba(22, 22, 22, 0.25);
+                            border-radius: $borderRadius;
+
+                            li {
+                                &.active a {
+                                    background: linear-gradient(to bottom right, $primaryGradOne, $primaryGradTwo);
+                                }
+
+                                a {
+                                    font-size: 16px;
+
+                                    &:hover {
+                                        background: linear-gradient(to bottom right, $primaryGradOne, $primaryGradTwo);
+                                    }
+                                }
+                            }
                         }
                     }
 

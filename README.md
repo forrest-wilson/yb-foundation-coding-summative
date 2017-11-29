@@ -8,7 +8,7 @@ Summative Assessment for Yoobee Foundation Coding Module
 
 ## Installing dependancies
 
-Run the following command in terminal/command line
+Run the following command in terminal
 
 ```
 npm install

@@ -277,26 +277,38 @@ $(document).ready(() => {
         }
         
         request += end[0] + "," + end[1] + "?geometries=geojson&access_token=" + mapboxgl.accessToken;
+
         $.ajax({
             method: "GET",
             url: request
         }).done((data) => {
             console.log("Data", data);
             var route = data.routes[0].geometry;
-            map.addLayer({
-                id: "route",
-                type: "line",
-                source: {
+
+            if (map.getSource("route")) {
+                let source = map.getSource("route");
+                console.log(source);
+                source.setData(route);
+            } else {
+                map.addSource("route", {
                     type: "geojson",
                     data: {
                         type: "Feature",
                         geometry: route
                     }
-                },
-                paint: {
-                    "line-width": 2
-                }
-            });
+                });
+
+                map.addLayer({
+                    "id": "route",
+                    "type": "line",
+                    "source": "route",
+                    "paint": {
+                        "line-width": 2
+                    }
+                });
+            }
+
+            console.log(map.getSource("route"));
 
             let pathCoordinates = data.routes[0].geometry.coordinates;
 

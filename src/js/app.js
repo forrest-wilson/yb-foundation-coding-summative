@@ -22,7 +22,7 @@ $(document).ready(() => {
 
     // Functions to be called on page load are in this IIFE
     (() => {
-        showFormPage("sectionThree");
+        showFormPage("sectionOne");
     })();
 
     // Updates the global screen dimension variables
@@ -45,6 +45,7 @@ $(document).ready(() => {
         }
     }
 
+    // Toggles the background image based on the backgroundImageIsShowing boolean
     function toggleBackgroundImage() {
         if (backgroundImageIsShowing) {
             $("#backgroundImage").fadeOut(transitionTime);
@@ -124,13 +125,17 @@ $(document).ready(() => {
         toggleHowDoIWorkOverlay();
     });
 
-    // Form Presentation Buttons
+    // Form Presentation Event Listeners
+
+    // Section One
 
     $("#sectionOneButton").click((e) => {
         e.preventDefault();
         showNextPage("sectionTwo", "sectionOne");
         toggleBackgroundImage();
     });
+
+    // Section Two
 
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
@@ -147,6 +152,8 @@ $(document).ready(() => {
         toggleBackgroundImage();
     });
 
+    // Section Three
+
     $("#sectionThreeButtonNext").click((e) => {
         e.preventDefault();
         showNextPage("sectionFour", "sectionThree");
@@ -161,6 +168,8 @@ $(document).ready(() => {
         e.preventDefault();
         addGeocoder("waypoints", map, "Please enter a stop");
     });
+
+    // Section Four
 
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
@@ -181,15 +190,13 @@ $(document).ready(() => {
 
     mapboxgl.accessToken = "pk.eyJ1IjoiZm9ycmVzdHdpbHNvbiIsImEiOiJjamFicGc4ejAwMmN0MnFxdWY3OGYyMW04In0.8hjX9IJyvPY_lkNdoaIBfw";
     
-    let map = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
         container: "map", // Map div ID
         style: "mapbox://styles/mapbox/light-v9",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
         interactive: false
     });
-
-    console.log("Map", map);
 
     // let directions = new MapboxDirections({
     //     accessToken: mapboxgl.accessToken,
@@ -198,7 +205,7 @@ $(document).ready(() => {
 
     function addGeocoder(id, map, placeholder) {
         // Instantiates a new instance of MapboxGeocoder
-        let geocoder = new MapboxGeocoder({
+        const geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             country: "NZ", // Limits searches to NZ
             limit: 5,
@@ -214,7 +221,7 @@ $(document).ready(() => {
 
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
-        
+
         geocoder.on("result", (e) => {
             mapPoints[id] = e.result.geometry.coordinates;
             console.log("Map Points", mapPoints);

@@ -184,11 +184,10 @@ $(document).ready(() => {
 
     // Section Four
 
-    $("#sectionFourButtonNext").click((e) => {
+    $("#finishButton").click((e) => {
         e.preventDefault();
         mapPoints.destination = latestCoords;
         console.log(mapPoints);
-        latestCoords = [];
         getRoute(mapPoints.origin, mapPoints.destination, mapPoints.waypoints);
     });
 
@@ -283,10 +282,10 @@ $(document).ready(() => {
             url: request
         }).done((data) => {
             console.log("Data", data);
-            var route = data.routes[0].geometry;
+            let route = data.routes[0].geometry;
+            let source = map.getSource("route");
 
-            if (map.getSource("route")) {
-                let source = map.getSource("route");
+            if (source) {
                 console.log(source);
                 source.setData(route);
             } else {

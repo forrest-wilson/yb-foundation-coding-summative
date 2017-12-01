@@ -34,6 +34,11 @@ $(document).ready(() => {
         return document.getElementById(id);
     }
 
+    // Clears the mapPoints waypoints property
+    function clearWaypoints() {
+        mapPoints.waypoints = [];
+    }
+
     // Updates the global screen dimension variables
     function updateScreenDimensions() {
         $windowHeight = $(window).height();
@@ -336,9 +341,5 @@ $(document).ready(() => {
         } else {
             console.log("Empty query string");
         }
-    }
-
-    function clearWaypoints() {
-        mapPoints.waypoints = [];
     }
 });

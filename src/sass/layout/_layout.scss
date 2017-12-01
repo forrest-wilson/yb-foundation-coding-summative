@@ -6,3 +6,15 @@
     box-sizing: border-box;
     color: $primaryTextColor;
 }
+
+.ajax-loading {
+    @include positioning(fixed, 0, 0, 0, 0);
+    z-index: 300;
+    display: none;
+
+    img {
+        @include positioning(absolute, 0, 0, 0, 0);
+        width: 200px;
+        height: 200px;
+    }
+}

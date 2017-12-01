@@ -226,7 +226,7 @@ $(document).ready(() => {
         style: "mapbox://styles/mapbox/light-v9",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
-        interactive: false
+        // interactive: false
     });
 
     function addGeocoder(id, map, placeholder) {
@@ -275,14 +275,22 @@ $(document).ready(() => {
         let start = origin,
             end = dest,
             stops = waypoints,
+            // Base request URL
             request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
         
+        // Adds stops to the request if they exist
         for (let i = 0; i < waypoints.length; i++) {
             request += stops[i][0] + "," + stops[i][1] + ";";
         }
         
+        // Adds the destination to the request
         request += end[0] + "," + end[1];
-        request += "?geometries=geojson&access_token=" + mapboxgl.accessToken;
+
+        // Optional request perameters
+        request += "?overview=full&geometries=geojson";
+
+        // End the request with access token
+        request += "&access_token=" + mapboxgl.accessToken;
 
         $.ajax({
             method: "GET",

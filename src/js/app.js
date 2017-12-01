@@ -29,6 +29,11 @@ $(document).ready(() => {
         showFormPage("sectionOne");
     })();
 
+    // Shorthand function for getting the documents ID
+    function getId(id) {
+        return document.getElementById(id);
+    }
+
     // Updates the global screen dimension variables
     function updateScreenDimensions() {
         $windowHeight = $(window).height();
@@ -259,10 +264,6 @@ $(document).ready(() => {
             inputs: false,
             instructions: false
         }
-    });
-
-    map.on("load", (e) => {
-        // console.log("Map:", e);
     });
 
     function getRoute(origin, dest, waypoints) {

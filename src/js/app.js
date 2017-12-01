@@ -216,7 +216,7 @@ $(document).ready(() => {
         style: "mapbox://styles/mapbox/light-v9",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
-        // interactive: false
+        interactive: false
     });
 
     function addGeocoder(id, map, placeholder) {
@@ -272,10 +272,11 @@ $(document).ready(() => {
             request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
         
         for (let i = 0; i < waypoints.length; i++) {
-            request += waypoints[i][0] + "," + waypoints[i][1] + ";";
+            request += stops[i][0] + "," + stops[i][1] + ";";
         }
         
-        request += end[0] + "," + end[1] + "?geometries=geojson&access_token=" + mapboxgl.accessToken;
+        request += end[0] + "," + end[1];
+        request += "?geometries=geojson&access_token=" + mapboxgl.accessToken;
 
         $.ajax({
             method: "GET",
@@ -306,8 +307,6 @@ $(document).ready(() => {
                     }
                 });
             }
-
-            console.log(map.getSource("route"));
 
             let pathCoordinates = data.routes[0].geometry.coordinates;
 

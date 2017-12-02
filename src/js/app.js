@@ -215,6 +215,18 @@ $(document).ready(() => {
         updateScreenDimensions();
     });
 
+    //
+    // AJAX Loading Handler
+    //
+
+    $(document).ajaxStart(() => {
+        $("#ajaxLoading").fadeIn(transitionTime);
+        $("#mask").fadeIn(transitionTime);
+    }).ajaxStop(() => {
+        $("#ajaxLoading").fadeOut(transitionTime);
+        $("#mask").fadeOut(transitionTime);
+    });
+
     ////////////////
     //// MapBox ////
     ////////////////

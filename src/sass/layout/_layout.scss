@@ -13,8 +13,9 @@
     display: none;
 
     img {
-        @include positioning(absolute, 0, 0, 0, 0);
+        @include positioning(absolute, 50%, $l: 50%);
         width: 200px;
         height: 200px;
+        transform: translateX(-50%) translateY(-50%);
     }
 }

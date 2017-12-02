@@ -9,6 +9,31 @@ $(document).ready(() => {
     const transitionTime = 400;
     const scaleFactor = 2;
 
+    ////////////////
+    //// Mapbox ////
+    ////////////////
+
+    mapboxgl.accessToken = "pk.eyJ1IjoiZm9ycmVzdHdpbHNvbiIsImEiOiJjamFicGc4ejAwMmN0MnFxdWY3OGYyMW04In0.8hjX9IJyvPY_lkNdoaIBfw";
+
+    // Mapbox Map
+    const map = new mapboxgl.Map({
+        container: "map", // Map div ID
+        style: "mapbox://styles/mapbox/light-v9",
+        center: nzCenter, // [lng, lat].
+        zoom: 4.5,
+        // interactive: false
+    });
+
+    // Mapbox Directions
+    const directions = new MapboxDirections({
+        accessToken: mapboxgl.accessToken,
+        units: "metric",
+        controls: {
+            inputs: false,
+            instructions: false
+        }
+    });
+
     // Mutable variables
     let $windowHeight = $(window).height();
     let $windowWidth = $(window).width();
@@ -24,10 +49,15 @@ $(document).ready(() => {
     ///////////////////////////////
 
     // Functions to be called on page load are in this IIFE
-    (() => {
+    function init() {
         // Present the initial page
         showFormPage("sectionOne");
-    })();
+        
+        // Calling the initial geocoder setup
+        addGeocoder("origin", map, "Please enter a start point");
+        addGeocoder("waypoints", map, "Please enter a stop");
+        addGeocoder("destination", map, "Please enter your destination");
+    };
 
     // Shorthand function for getting the documents ID
     function getId(id) {
@@ -116,6 +146,116 @@ $(document).ready(() => {
         setTimeout(() => {
             elToShow.style.transition = transitionTime + "ms";
             showFormPage(idToShow);
+        });
+    }
+
+    // Adds a geocode control and appends to the document
+    function addGeocoder(id, map, placeholder) {
+        // Instantiates a new instance of MapboxGeocoder
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            country: "NZ", // Limits searches to NZ
+            limit: 5,
+            placeholder: placeholder
+        });
+        const ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
+        const geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
+
+        // Adds the control to the map. Might be able to add to any element
+        map.addControl(geocoder);
+
+        // Copys the geocoder to custom DOM element
+        document.getElementById(id).appendChild(geocoder.onAdd(map));
+
+        // Removes the original mapboxgl controls from the map as they duplicate
+        ctrlEls[0].removeChild(ctrlEls[0].children[0]);
+
+        geocoder.on("result", (e) => {
+            console.log(e);
+            latestCoords = e.result.geometry.coordinates;
+            console.log("Latest Coordinates:", latestCoords);
+        });
+    }
+
+    // Gets the lat and lng of a string
+    function getGeocodePoint(queryString) {
+        let requestUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + queryString + ".json?geometries=geojson&access_token=" + mapboxgl.accessToken;
+
+        if (queryString !== "") {
+            $.ajax({
+                method: "GET",
+                url: requestUrl
+            }).done((data) => {
+                if (data.features[0].relevance === 1) {
+                    mapPoints.waypoints.push(data.features[0].geometry.coordinates);
+                }
+            });
+        } else {
+            console.log("Empty query string");
+        }
+    }
+
+    // Gets the route of origin, waypoints and destination arrays
+    function getRoute(origin, dest, waypoints) {
+        let start = origin,
+            end = dest,
+            stops = waypoints,
+            // Base request URL
+            request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
+        
+        // Adds stops to the request if they exist
+        for (let i = 0; i < waypoints.length; i++) {
+            request += stops[i][0] + "," + stops[i][1] + ";";
+        }
+        
+        // Adds the destination to the request
+        request += end[0] + "," + end[1];
+
+        // Optional request perameters
+        request += "?overview=full&geometries=geojson";
+
+        // End the request with access token
+        request += "&access_token=" + mapboxgl.accessToken;
+
+        $.ajax({
+            method: "GET",
+            url: request
+        }).done((data) => {
+            console.log("Data", data);
+            let route = data.routes[0].geometry;
+            let source = map.getSource("route");
+
+            if (source) {
+                console.log(source);
+                source.setData(route);
+            } else {
+                map.addSource("route", {
+                    type: "geojson",
+                    data: {
+                        type: "Feature",
+                        geometry: route
+                    }
+                });
+
+                map.addLayer({
+                    "id": "route",
+                    "type": "line",
+                    "source": "route",
+                    "paint": {
+                        "line-width": 2
+                    }
+                });
+            }
+
+            let pathCoordinates = data.routes[0].geometry.coordinates;
+
+            let bounds = pathCoordinates.reduce((bounds, coord) => {
+                return bounds.extend(coord);
+            }, new mapboxgl.LngLatBounds(pathCoordinates[0], pathCoordinates[0]));
+
+            map.fitBounds(bounds, {
+                padding: 100
+            });
         });
     }
 
@@ -227,139 +367,6 @@ $(document).ready(() => {
         $("#mask").fadeOut(transitionTime);
     });
 
-    ////////////////
-    //// MapBox ////
-    ////////////////
-
-    mapboxgl.accessToken = "pk.eyJ1IjoiZm9ycmVzdHdpbHNvbiIsImEiOiJjamFicGc4ejAwMmN0MnFxdWY3OGYyMW04In0.8hjX9IJyvPY_lkNdoaIBfw";
-    
-    const map = new mapboxgl.Map({
-        container: "map", // Map div ID
-        style: "mapbox://styles/mapbox/light-v9",
-        center: nzCenter, // [lng, lat].
-        zoom: 4.5,
-        // interactive: false
-    });
-
-    function addGeocoder(id, map, placeholder) {
-        // Instantiates a new instance of MapboxGeocoder
-        const geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken,
-            country: "NZ", // Limits searches to NZ
-            limit: 5,
-            placeholder: placeholder
-        });
-        const ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
-        const geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
-
-        // Adds the control to the map. Might be able to add to any element
-        map.addControl(geocoder);
-
-        // Copys the geocoder to custom DOM element
-        document.getElementById(id).appendChild(geocoder.onAdd(map));
-
-        // Removes the original mapboxgl controls from the map as they duplicate
-        ctrlEls[0].removeChild(ctrlEls[0].children[0]);
-
-        geocoder.on("result", (e) => {
-            console.log(e);
-            latestCoords = e.result.geometry.coordinates;
-            console.log("Latest Coordinates:", latestCoords);
-        });
-    }
-
-    // Calling the initial geocoder setup
-    addGeocoder("origin", map, "Please enter a start point");
-    addGeocoder("waypoints", map, "Please enter a stop");
-    addGeocoder("destination", map, "Please enter your destination");
-
-    // Directions API
-    let directions = new MapboxDirections({
-        accessToken: mapboxgl.accessToken,
-        units: "metric",
-        controls: {
-            inputs: false,
-            instructions: false
-        }
-    });
-
-    function getRoute(origin, dest, waypoints) {
-        let start = origin,
-            end = dest,
-            stops = waypoints,
-            // Base request URL
-            request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
-        
-        // Adds stops to the request if they exist
-        for (let i = 0; i < waypoints.length; i++) {
-            request += stops[i][0] + "," + stops[i][1] + ";";
-        }
-        
-        // Adds the destination to the request
-        request += end[0] + "," + end[1];
-
-        // Optional request perameters
-        request += "?overview=full&geometries=geojson";
-
-        // End the request with access token
-        request += "&access_token=" + mapboxgl.accessToken;
-
-        $.ajax({
-            method: "GET",
-            url: request
-        }).done((data) => {
-            console.log("Data", data);
-            let route = data.routes[0].geometry;
-            let source = map.getSource("route");
-
-            if (source) {
-                console.log(source);
-                source.setData(route);
-            } else {
-                map.addSource("route", {
-                    type: "geojson",
-                    data: {
-                        type: "Feature",
-                        geometry: route
-                    }
-                });
-
-                map.addLayer({
-                    "id": "route",
-                    "type": "line",
-                    "source": "route",
-                    "paint": {
-                        "line-width": 2
-                    }
-                });
-            }
-
-            let pathCoordinates = data.routes[0].geometry.coordinates;
-
-            let bounds = pathCoordinates.reduce((bounds, coord) => {
-                return bounds.extend(coord);
-            }, new mapboxgl.LngLatBounds(pathCoordinates[0], pathCoordinates[0]));
-
-            map.fitBounds(bounds, {
-                padding: 100
-            });
-        });
-    }
-
-    function getGeocodePoint(queryString) {
-        let requestUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + queryString + ".json?geometries=geojson&access_token=" + mapboxgl.accessToken;
-
-        if (queryString !== "") {
-            $.ajax({
-                method: "GET",
-                url: requestUrl
-            }).done((data) => {
-                if (data.features[0].relevance === 1) {
-                    mapPoints.waypoints.push(data.features[0].geometry.coordinates);
-                }
-            });
-        } else {
-            console.log("Empty query string");
-        }
-    }
+    // Init invocation
+    init();
 });

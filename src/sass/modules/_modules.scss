@@ -116,6 +116,11 @@
 
     .map {
         @include positioning(fixed, 0, 0, 0, 0);
+
+        .marker {
+            font-size: 50px;
+            color: #AB00C9;
+        }
     }
 
     .background-overlay {

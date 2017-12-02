@@ -18,7 +18,7 @@ $(document).ready(() => {
     // Mapbox Map
     const map = new mapboxgl.Map({
         container: "map", // Map div ID
-        style: "mapbox://styles/mapbox/light-v9",
+        style: "mapbox://styles/forrestwilson/cjaou8vqqfup52spf1xsw4o2f",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
         // interactive: false
@@ -52,7 +52,7 @@ $(document).ready(() => {
     function init() {
         // Present the initial page
         showFormPage("sectionOne");
-        
+
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point");
         addGeocoder("waypoints", map, "Please enter a stop");
@@ -246,6 +246,14 @@ $(document).ready(() => {
                     }
                 });
             }
+
+            // Adds markers to the map
+            data.waypoints.forEach((marker, i) => {
+                let el = document.createElement("div");
+                el.className = "fa fa-map-marker marker";
+
+                new mapboxgl.Marker(el).setLngLat(data.waypoints[i].location).addTo(map);
+            });
 
             let pathCoordinates = data.routes[0].geometry.coordinates;
 

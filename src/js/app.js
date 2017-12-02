@@ -59,11 +59,6 @@ $(document).ready(() => {
         addGeocoder("destination", map, "Please enter your destination");
     };
 
-    // Shorthand function for getting the documents ID
-    function getId(id) {
-        return document.getElementById(id);
-    }
-
     // Clears the mapPoints waypoints property
     function clearWaypoints() {
         mapPoints.waypoints = [];

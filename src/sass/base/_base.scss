@@ -68,3 +68,22 @@ input {
     z-index: 200;
     display: none;
 }
+
+// Geocoder Style Overwriting
+
+.geocoder-icon-close {
+    background-image: url("../img/close.svg");
+}
+
+.geocoder-icon-loading {
+    background-image: url("../img/loading_ring.svg");
+}
+
+.geocoder-icon-loading,
+.geocoder-icon-close {
+    background-size: cover;
+    background-color: transparent!important;
+    width: 20px;
+    height: 20px;
+    animation: none;
+}

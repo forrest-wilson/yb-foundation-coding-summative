@@ -42,6 +42,10 @@ $(document).ready(() => {
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
     let latestData = null;
+
+    let latestOrigin = null;
+    let latestDestination = null;
+
     let waypoints = [];
     let mapPoints = {
         origin: null,
@@ -60,9 +64,9 @@ $(document).ready(() => {
         showFormPage("sectionOne");
 
         // Calling the initial geocoder setup
-        addGeocoder("origin", map, "Please enter a start point");
+        addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
         addGeocoder("waypoints", map, "Please enter a stop");
-        addGeocoder("destination", map, "Please enter your destination");
+        addGeocoder("destination", map, "Please enter your destination", "destinationGeocoder");
     };
 
     // Updates the global screen dimension variables
@@ -145,7 +149,7 @@ $(document).ready(() => {
     }
 
     // Adds a geocode control and appends to the document
-    function addGeocoder(id, map, placeholder) {
+    function addGeocoder(id, map, placeholder, geocoderId) {
         // Instantiates a new instance of MapboxGeocoder
         const geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
@@ -162,29 +166,47 @@ $(document).ready(() => {
         // Copys the geocoder to custom DOM element
         document.getElementById(id).appendChild(geocoder.onAdd(map));
 
+        // If a geocoderId has been added, run this code
+        if (geocoderId) {
+            // Returns an array of the elements children
+            let geocoderEls = document.getElementById(id).children;
+            let elCount = geocoderEls.length;
+
+            geocoderEls[elCount - 1].setAttribute("id", geocoderId);
+        }
+
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
-
-        let array = document.getElementById("waypoints").children;
-        let arrayIndex = null;
-
-        for (let i = 0; i < array.length; i++) {
-            ((index) => {
-                array[i].onclick = () => {
-                    arrayIndex = index;
-                };
-            })(i);
-        }
 
         geocoder.on("result", (e) => {
             latestData = e;
 
-            if (id === "waypoints") {
-                if (waypoints === []) {
-                    waypoints.push(e);
-                } else {
-                    waypoints.splice(arrayIndex, 1, e);
-                }
+            switch (id) {
+                case "origin":
+                    mapPoints.origin = e;
+                    break;
+                case "destination":
+                    mapPoints.destination = e;
+                    break;
+                case "waypoints":
+                    let array = document.getElementById("waypoints").children;
+                    let arrayIndex = null;
+            
+                    for (let i = 0; i < array.length; i++) {
+                        ((index) => {
+                            array[i].onclick = () => {
+                                arrayIndex = index;
+                            };
+                        })(i);
+                    }
+
+                    if (waypoints === []) {
+                        waypoints.push(e);
+                    } else {
+                        waypoints.splice(arrayIndex, 1, e);
+                    }
+
+                    break;
             }
         });
     }
@@ -299,12 +321,10 @@ $(document).ready(() => {
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
 
-        if (latestData !== null) {
-            mapPoints.origin = latestData;
-            latestData = null;
+        if (mapPoints.origin) {
             showNextPage("sectionThree", "sectionTwo");
         } else {
-            console.log("No result from input");
+            console.log("No Origin Set");
         }
     });
 
@@ -362,12 +382,10 @@ $(document).ready(() => {
     $("#finishButton").click((e) => {
         e.preventDefault();
 
-        if (latestData !== null) {
-            mapPoints.destination = latestData;
-            latestData = null;
+        if (mapPoints.destination) {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints);
         } else {
-            console.log("No result from input");
+            console.log("No Destination Set");
         }
 
         console.log(mapPoints);

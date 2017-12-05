@@ -41,11 +41,6 @@ $(document).ready(() => {
     let $windowWidth = $(window).width();
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
-    let latestData = null;
-
-    let latestOrigin = null;
-    let latestDestination = null;
-
     let waypoints = [];
     let mapPoints = {
         origin: null,
@@ -67,6 +62,17 @@ $(document).ready(() => {
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
         addGeocoder("waypoints", map, "Please enter a stop");
         addGeocoder("destination", map, "Please enter your destination", "destinationGeocoder");
+
+        // Initialize event handlers that rely on geocoders being in the DOM
+        $("#originGeocoder .geocoder-pin-right .geocoder-icon-close").click((e) => {
+            e.preventDefault();
+            mapPoints.origin = null;
+        });
+
+        $("#destinationGeocoder .geocoder-pin-right .geocoder-icon-close").click((e) => {
+            e.preventDefault();
+            mapPoints.destination = null;
+        });
     };
 
     // Updates the global screen dimension variables
@@ -179,8 +185,6 @@ $(document).ready(() => {
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
         geocoder.on("result", (e) => {
-            latestData = e;
-
             switch (id) {
                 case "origin":
                     mapPoints.origin = e;

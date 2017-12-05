@@ -8,6 +8,8 @@ $(document).ready(() => {
     const nzCenter = [172.5, -41.278919]; // Center coordinates for NZ
     const transitionTime = 400;
     const scaleFactor = 2;
+    const baseDirectionsUrl = "https://api.mapbox.com/directions/v5/mapbox/driving/";
+    const baseGeocodingUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
 
     ////////////////
     //// Mapbox ////
@@ -39,10 +41,14 @@ $(document).ready(() => {
     let $windowWidth = $(window).width();
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
-    let latestCoords = [];
+    let latestData = null;
+    let waypoints = [];
     let mapPoints = {
-        waypoints: []
-    };
+        origin: null,
+        waypoints: [],
+        destination: null,
+        markers: []
+    }
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -59,16 +65,10 @@ $(document).ready(() => {
         addGeocoder("destination", map, "Please enter your destination");
     };
 
-    // Clears the mapPoints waypoints property
-    function clearWaypoints() {
-        mapPoints.waypoints = [];
-    }
-
     // Updates the global screen dimension variables
     function updateScreenDimensions() {
         $windowHeight = $(window).height();
         $windowWidth = $(window).width();
-        console.log("Screen size changed: H:", $windowHeight, "W:", $windowWidth);
     }
 
     // Toggles the how do i work overlay
@@ -153,8 +153,8 @@ $(document).ready(() => {
             limit: 5,
             placeholder: placeholder
         });
-        const ctrlEls = document.getElementsByClassName("mapboxgl-ctrl-top-right");
-        const geocoderInput = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
+        const ctrlEls = $(".mapboxgl-ctrl-top-right");
+        const geocoderInput = $(".mapboxgl-ctrl-geocoder");
 
         // Adds the control to the map. Might be able to add to any element
         map.addControl(geocoder);
@@ -165,46 +165,42 @@ $(document).ready(() => {
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
-        geocoder.on("result", (e) => {
-            console.log(e);
-            latestCoords = e.result.geometry.coordinates;
-            console.log("Latest Coordinates:", latestCoords);
-        });
-    }
+        let array = document.getElementById("waypoints").children;
+        let arrayIndex = null;
 
-    // Gets the lat and lng of a string
-    function getGeocodePoint(queryString) {
-        let requestUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/" + queryString + ".json?geometries=geojson&access_token=" + mapboxgl.accessToken;
-
-        if (queryString !== "") {
-            $.ajax({
-                method: "GET",
-                url: requestUrl
-            }).done((data) => {
-                if (data.features[0].relevance === 1) {
-                    mapPoints.waypoints.push(data.features[0].geometry.coordinates);
-                }
-            });
-        } else {
-            console.log("Empty query string");
+        for (let i = 0; i < array.length; i++) {
+            ((index) => {
+                array[i].onclick = () => {
+                    arrayIndex = index;
+                    // console.log(index);
+                };
+            })(i);
         }
+
+        geocoder.on("result", (e) => {
+            latestData = e;
+
+            if (id === "waypoints") {
+                if (waypoints === []) {
+                    waypoints.push(e);
+                } else {
+                    waypoints.splice(arrayIndex, 1, e);
+                }
+            }
+        });
     }
 
     // Gets the route of origin, waypoints and destination arrays
     function getRoute(origin, dest, waypoints) {
-        let start = origin,
-            end = dest,
-            stops = waypoints,
-            // Base request URL
-            request = "https://api.mapbox.com/directions/v5/mapbox/driving/" + start[0] + "," + start[1] + ";";
-        
+        let request = baseDirectionsUrl + origin[0] + "," + origin[1] + ";"; // Base request URL
+
         // Adds stops to the request if they exist
         for (let i = 0; i < waypoints.length; i++) {
-            request += stops[i][0] + "," + stops[i][1] + ";";
+            request += waypoints[i].result.geometry.coordinates[0] + "," + waypoints[i].result.geometry.coordinates[1] + ";";
         }
         
         // Adds the destination to the request
-        request += end[0] + "," + end[1];
+        request += dest[0] + "," + dest[1];
 
         // Optional request perameters
         request += "?overview=full&geometries=geojson";
@@ -242,12 +238,19 @@ $(document).ready(() => {
                 });
             }
 
+            console.log(map);
+
+            for (let i = 0; i < mapPoints.markers.length; i++) {
+                mapPoints.markers[i].remove();
+            }
+
             // Adds markers to the map
             data.waypoints.forEach((marker, i) => {
-                let el = document.createElement("div");
-                el.className = "fa fa-map-marker marker";
+                let newMarker = document.createElement("div");
+                newMarker.className = "fa fa-map-marker marker";
 
-                new mapboxgl.Marker(el).setLngLat(data.waypoints[i].location).addTo(map);
+                let a = new mapboxgl.Marker(newMarker, { offset: [0, -20] }).setLngLat(data.waypoints[i].location).addTo(map);
+                mapPoints.markers.push(a);
             });
 
             let pathCoordinates = data.routes[0].geometry.coordinates;
@@ -296,13 +299,13 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonNext").click((e) => {
         e.preventDefault();
-        if (latestCoords[0]) {
-            mapPoints.origin = latestCoords;
-            console.log(mapPoints);
+
+        if (latestData !== null) {
+            mapPoints.origin = latestData;
+            latestData = null;
             showNextPage("sectionThree", "sectionTwo");
-            clearWaypoints();
         } else {
-            console.log("Not a real place");
+            console.log("No result from input");
         }
     });
 
@@ -316,13 +319,18 @@ $(document).ready(() => {
 
     $("#sectionThreeButtonNext").click((e) => {
         e.preventDefault();
-        showNextPage("sectionFour", "sectionThree");
 
-        let inputEls = document.getElementById("waypoints").children;
-        for (let i = 0; i < inputEls.length; i++) {
-            let val = inputEls[i].children[1].value;
-            getGeocodePoint(val);
+        let waypointInputs = document.getElementById("waypoints").children;
+
+        mapPoints.waypoints = []; // Makes sure the array is empty
+
+        for (let i = 0; i < waypointInputs.length; i++) {
+            if (waypointInputs[i].children[1].value !== "") {
+                mapPoints.waypoints.push(waypoints[i]);
+            }
         }
+
+        showNextPage("sectionFour", "sectionThree");
     });
 
     $("#sectionThreeButtonBack").click((e) => {
@@ -332,22 +340,43 @@ $(document).ready(() => {
 
     $("#anotherStop").click((e) => {
         e.preventDefault();
-        addGeocoder("waypoints", map, "Please enter a stop");
+
+        let allInputs = document.getElementById("waypoints").children;
+        let valueArray = [];
+
+        // Loops through each waypoint input and pushes the input value to the valueArray
+        for (let i = 0; i < allInputs.length; i++) {
+            valueArray.push(allInputs[i].children[1].value);
+        }
+
+        // If an input is empty, don't add another input field to the DOM
+        if (valueArray.every((val) => { return val !== ""; })) {
+            addGeocoder("waypoints", map, "Please enter a stop");
+        } else {
+            console.log("Please finish entering the empty stops before adding more.");
+            // handle this with a tooltip or something
+        }
     });
 
     // Section Four
 
     $("#finishButton").click((e) => {
         e.preventDefault();
-        mapPoints.destination = latestCoords;
+
+        if (latestData !== null) {
+            mapPoints.destination = latestData;
+            latestData = null;
+            getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints);
+        } else {
+            console.log("No result from input");
+        }
+
         console.log(mapPoints);
-        getRoute(mapPoints.origin, mapPoints.destination, mapPoints.waypoints);
     });
 
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionThree", "sectionFour");
-        clearWaypoints();
     });
 
     //

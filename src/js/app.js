@@ -23,7 +23,7 @@ $(document).ready(() => {
         style: "mapbox://styles/forrestwilson/cjaou8vqqfup52spf1xsw4o2f",
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
-        // interactive: false
+        interactive: false
     });
 
     // Mapbox Directions
@@ -172,7 +172,6 @@ $(document).ready(() => {
             ((index) => {
                 array[i].onclick = () => {
                     arrayIndex = index;
-                    // console.log(index);
                 };
             })(i);
         }

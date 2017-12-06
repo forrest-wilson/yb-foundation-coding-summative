@@ -41,6 +41,7 @@ $(document).ready(() => {
     let $windowWidth = $(window).width();
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
+    let newJourneyConfirmationShowing = false;
     let waypoints = [];
     let mapPoints = {
         origin: null,
@@ -91,6 +92,18 @@ $(document).ready(() => {
             $("#mask").fadeIn(transitionTime);
             $("#howDoIWorkPopup").fadeIn(transitionTime);
             howDoIWorkOverlayShowing = true;
+        }
+    }
+
+    function toggleNewJourneyConfirmation() {
+        if (newJourneyConfirmationShowing) {
+            $("#mask").fadeOut(transitionTime);
+            $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
+            newJourneyConfirmationShowing = false;
+        } else {
+            $("#mask").fadeIn(transitionTime);
+            $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
+            newJourneyConfirmationShowing = true;
         }
     }
 
@@ -154,6 +167,65 @@ $(document).ready(() => {
         });
     }
 
+    // Returns the application to it's default state
+    function returnToDefaults() {
+        let allGeocoders = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
+        let waypointInputs = document.getElementById("waypoints").children;
+
+        // Removes all map markers from the map
+        for (let i = 0; i < mapPoints.markers.length; i++) {
+            mapPoints.markers[i].remove();
+        }
+
+        // Sets the value of the geocoder inputs to null
+        for (let j = 0; j < allGeocoders.length; j++) {
+            allGeocoders[j].children[1].value = null;
+        }
+
+        // Removes all but the first waypoint geocoder element from the DOM
+        // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
+        for (let k = 0; k < waypointInputs.length; k++) {
+            if (k !== 0) {
+                waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
+            }
+        }
+
+        let vis = map.getLayoutProperty("route", "visibility");
+
+        if (vis === "visible") {
+            map.setLayoutProperty("route", "visibility", "none");
+        }
+
+        mapPoints = {
+            origin: null,
+            destination: null,
+            waypoints: [],
+            markers: []
+        };
+
+        map.flyTo({
+            center: nzCenter,
+            zoom: 4.5
+        });
+    }
+
+    // Converts a number into a "km" string
+    function getRouteDistance(distance, decimals) {
+        if (typeof decimals === "undefined") decimals = 1;
+        let roundedNumber = Number(Math.round((distance / 1000) + "e" + decimals) + "e-" + decimals);
+
+        return roundedNumber + "km";
+    }
+
+    // Converts the route time from seconds to hours/minutes
+    function getRouteDuration(seconds) {
+        let totalTime = seconds / 3600;
+        let hours = Math.floor(totalTime);
+        let minutes = Math.floor((totalTime - hours) * 60);
+
+        return hours + " hours & " + minutes + " minutes";
+    }
+
     // Adds a geocode control and appends to the document
     function addGeocoder(id, map, placeholder, geocoderId) {
         // Instantiates a new instance of MapboxGeocoder
@@ -207,10 +279,8 @@ $(document).ready(() => {
                 case "waypoints":
                     if (waypoints === []) {
                         waypoints.push(e);
-                        console.log("If being run");
                     } else {
                         waypoints.splice(arrayIndex, 1, e);
-                        console.log("Else being run");
                     }
 
                     break;
@@ -222,7 +292,7 @@ $(document).ready(() => {
     }
 
     // Gets the route of origin, waypoints and destination arrays
-    function getRoute(origin, dest, waypoints) {
+    function getRoute(origin, dest, waypoints, callback) {
         let request = baseDirectionsUrl + origin[0] + "," + origin[1] + ";"; // Base request URL
 
         // Adds stops to the request if they exist
@@ -250,8 +320,8 @@ $(document).ready(() => {
             // This "if" statement updates the route layer if it exists
             // otherwise it adds the layer to the map
             if (source) {
-                console.log(source);
                 source.setData(route);
+                map.setLayoutProperty("route", "visibility", "visible");
             } else {
                 map.addSource("route", {
                     type: "geojson",
@@ -265,6 +335,9 @@ $(document).ready(() => {
                     "id": "route",
                     "type": "line",
                     "source": "route",
+                    "layout": {
+                        "visibility": "visible"
+                    },
                     "paint": {
                         "line-width": 2
                     }
@@ -296,6 +369,11 @@ $(document).ready(() => {
             map.fitBounds(bounds, {
                 padding: 100
             });
+
+            console.log(getRouteDistance(data.routes[0].distance));
+            console.log(getRouteDuration(data.routes[0].duration));
+
+            callback("sectionFive", "sectionFour");
         });
     }
 
@@ -399,7 +477,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         if (mapPoints.destination) {
-            getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints);
+            getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, showNextPage);
         } else {
             console.log("No Destination Set");
             // handle this with a tooltip or something
@@ -411,6 +489,25 @@ $(document).ready(() => {
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
         showPreviousPage("sectionThree", "sectionFour");
+    });
+
+    // Section Five
+
+    $("#newJourney").click((e) => {
+        e.preventDefault();
+        toggleNewJourneyConfirmation();
+    });
+
+    // New Journey Confirmation Popup
+
+    $("#confirmNewJourney").click((e) => {
+        toggleNewJourneyConfirmation();
+        returnToDefaults();
+        showPreviousPage("sectionTwo", "sectionFive");
+    });
+
+    $("#declineNewJourney").click((e) => {
+        toggleNewJourneyConfirmation();
     });
 
     //

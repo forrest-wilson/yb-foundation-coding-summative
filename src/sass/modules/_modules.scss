@@ -162,8 +162,6 @@
 
     .inner {
         padding: 15px;
-        border-radius: $borderRadius;
-        background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         // @include positioning(absolute, 10px, 10px, 10px, 10px);
         position: relative;
         overflow: scroll;
@@ -178,6 +176,34 @@
                 display: table;
                 clear: both;
             }
+        }
+    }
+}
+
+.how-do-i-work-popup,
+.new-journey-confirmation-popup {
+    .inner {
+        background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
+        border-radius: $borderRadius;
+    }
+}
+
+.new-journey-confirmation-popup {
+    position: fixed;
+    z-index: 300;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 90%;
+    max-width: 350px;
+    display: none;
+
+    .inner {
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-column-gap: 10px;
+            padding-top: 15px;
         }
     }
 }

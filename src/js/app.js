@@ -57,7 +57,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionOne");
+        showFormPage("sectionFive");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -504,9 +504,10 @@ $(document).ready(() => {
     // Section Five
 
     $("#decreaseCounter").click(() => {
+        $("#peopleCounter").tooltipster("close");
         if ($("#counter").text() <= 1) {
-            console.log("You can't have less than 1 person");
-            // handle error
+            $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
+            $("#peopleCounter").tooltipster("open");
         } else {
             let curText = $("#counter").text();
             $("#counter").text(parseInt(curText) - 1);
@@ -514,9 +515,10 @@ $(document).ready(() => {
     });
 
     $("#increaseCounter").click(() => {
+        $("#peopleCounter").tooltipster("close");
         if (parseInt($("#counter").text()) >= 6) {
-            console.log("You can't have more than 6 people");
-            // handle error
+            $("#peopleCounter").tooltipster("content", "You can't have more than 6 people");
+            $("#peopleCounter").tooltipster("open");
         } else {
             let curText = $("#counter").text();
             $("#counter").text(parseInt(curText) + 1);

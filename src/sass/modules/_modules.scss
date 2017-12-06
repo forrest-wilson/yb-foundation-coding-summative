@@ -114,6 +114,32 @@
         }
     }
 
+    .section-five {
+        .inner {
+            .input-wrapper {
+                @include positioning(fixed, $t: 50%, $l: 50%);
+                transform: translateX(-50%) translateY(-50%);
+            }
+
+            .people-counter {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+                font-size: 70px;
+
+                .counter-button {
+                    cursor: pointer;
+                }
+
+                span {
+                    margin: 0 auto;
+                }
+            }
+        }
+    }
+
     .map {
         @include positioning(fixed, 0, 0, 0, 0);
 

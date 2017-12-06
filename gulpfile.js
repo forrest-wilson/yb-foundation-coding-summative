@@ -74,9 +74,19 @@ gulp.task("local-file-copy", () => {
         .pipe(gulp.dest("./temp/css/")),
 
     faFont = gulp.src("./node_modules/font-awesome/fonts/*.*")
-        .pipe(gulp.dest("./temp/fonts/"));
+        .pipe(gulp.dest("./temp/fonts/")),
 
-    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont);
+    // Tooltipster
+    tooltipsterCSS = gulp.src("./node_modules/tooltipster/dist/css/tooltipster.bundle.min.css")
+        .pipe(gulp.dest("./temp/css/")),
+
+    tooltipsterThemeCSS = gulp.src("./node_modules/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-punk.min.css")
+    .pipe(gulp.dest("./temp/css/")),
+
+    tooltipsterJS = gulp.src("./node_modules/tooltipster/dist/js/tooltipster.bundle.min.js")
+        .pipe(gulp.dest("./temp/js/"))
+
+    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS);
 });
 
 // Copies the HTML files

@@ -74,6 +74,11 @@ $(document).ready(() => {
             e.preventDefault();
             mapPoints.destination = null;
         });
+
+        $(".tooltip").tooltipster({
+            theme: "tooltipster-punk",
+            trigger: "custom"
+        });
     };
 
     // Updates the global screen dimension variables
@@ -269,6 +274,8 @@ $(document).ready(() => {
         }
 
         geocoder.on("result", (e) => {
+            $("#origin").tooltipster("close");
+            $("#destination").tooltipster("close");
             switch (id) {
                 case "origin":
                     mapPoints.origin = e;
@@ -420,8 +427,7 @@ $(document).ready(() => {
         if (mapPoints.origin) {
             showNextPage("sectionThree", "sectionTwo");
         } else {
-            console.log("No Origin Set");
-            // handle this with a tooltip or something
+            $("#origin").tooltipster("open");
         }
     });
 
@@ -484,8 +490,7 @@ $(document).ready(() => {
         if (mapPoints.destination) {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, showNextPage);
         } else {
-            console.log("No Destination Set");
-            // handle this with a tooltip or something
+            $("#destination").tooltipster("open");
         }
 
         console.log(mapPoints);

@@ -367,7 +367,12 @@ $(document).ready(() => {
             }, new mapboxgl.LngLatBounds(pathCoordinates[0], pathCoordinates[0]));
 
             map.fitBounds(bounds, {
-                padding: 100
+                padding: {
+                    top: 150,
+                    left: 50,
+                    right: 50,
+                    bottom: 80
+                }
             });
 
             console.log(getRouteDistance(data.routes[0].distance));
@@ -496,6 +501,11 @@ $(document).ready(() => {
     $("#newJourney").click((e) => {
         e.preventDefault();
         toggleNewJourneyConfirmation();
+    });
+
+    $("#editJourney").click((e) => {
+        e.preventDefault();
+        showPreviousPage("sectionTwo", "sectionFive");
     });
 
     // New Journey Confirmation Popup

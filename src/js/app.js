@@ -484,7 +484,7 @@ $(document).ready(() => {
 
     // Section Four
 
-    $("#finishButton").click((e) => {
+    $("#sectionFourButtonNext").click((e) => {
         e.preventDefault();
 
         if (mapPoints.destination) {
@@ -502,6 +502,28 @@ $(document).ready(() => {
     });
 
     // Section Five
+
+    $("#decreaseCounter").click(() => {
+        if ($("#counter").text() <= 1) {
+            console.log("You can't have less than 1 person");
+            // handle error
+        } else {
+            let curText = $("#counter").text();
+            $("#counter").text(parseInt(curText) - 1);
+        }
+    });
+
+    $("#increaseCounter").click(() => {
+        if (parseInt($("#counter").text()) >= 6) {
+            console.log("You can't have more than 6 people");
+            // handle error
+        } else {
+            let curText = $("#counter").text();
+            $("#counter").text(parseInt(curText) + 1);
+        }
+    });
+
+    // Journey Editing
 
     $("#newJourney").click((e) => {
         e.preventDefault();

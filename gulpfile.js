@@ -40,8 +40,6 @@ gulp.task("babel", () => {
         .pipe(babel({
             presets: ["env"]
         }))
-        // .pipe(uglify())
-        .pipe(rename("app.min.js"))
         .pipe(gulp.dest("./temp/js/"));
 });
 
@@ -142,6 +140,7 @@ gulp.task("html-replace", () => {
         .pipe(replace("./css/normalize.css", "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"))
         .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
         .pipe(replace("./css/font-awesome.min.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"))
+        .pipe(replace("./js/app.js", "./js/app.min.js"))
         .pipe(gulp.dest("./dist/"));
 });
 
@@ -162,15 +161,18 @@ gulp.task("dist-file-copy", (cb) => {
     // CSS
     css = gulp.src("./temp/css/style.min.css")
         .pipe(replace("@font-face{font-family:\"Josefin Sans\";src:url(\"../fonts/Josefin_Sans/JosefinSans-Light.ttf\"),url(\"../fonts/Josefin_Sans/JosefinSans-Thin.ttf\")}", ""))
-        .pipe(gulp.dest("./dist/css/")),
+        .pipe(gulp.dest("./dist/css/"));
 
-    // JS
-    js = gulp.src("./temp/js/app.min.js")
+    return merge(json, img, favicon, css);
+});
+
+gulp.task("uglify-js", () => {
+    return gulp.src("./temp/js/app.js")
+        .pipe(uglify())
+        .pipe(rename("app.min.js"))
         .pipe(gulp.dest("./dist/js/"));
-
-    return merge(json, img, favicon, css, js);
 });
 
 gulp.task("build:dist", (cb) => {
-    runSequence("build:temp", "clean-dist", "html-replace", "dist-file-copy", cb);
+    runSequence("build:temp", "clean-dist", "html-replace", "dist-file-copy", "uglify-js", cb);
 });

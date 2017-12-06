@@ -184,6 +184,18 @@ $(document).ready(() => {
         // Removes the original mapboxgl controls from the map as they duplicate
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
+        // Has to be outside of the "result" event listener
+        let array = document.getElementById("waypoints").children;
+        let arrayIndex = null;
+
+        for (let i = 0; i < array.length; i++) {
+            ((index) => {
+                array[i].onclick = () => {
+                    arrayIndex = index;
+                };
+            })(i);
+        }
+
         geocoder.on("result", (e) => {
             switch (id) {
                 case "origin":
@@ -193,21 +205,12 @@ $(document).ready(() => {
                     mapPoints.destination = e;
                     break;
                 case "waypoints":
-                    let array = document.getElementById("waypoints").children;
-                    let arrayIndex = null;
-            
-                    for (let i = 0; i < array.length; i++) {
-                        ((index) => {
-                            array[i].onclick = () => {
-                                arrayIndex = index;
-                            };
-                        })(i);
-                    }
-
                     if (waypoints === []) {
                         waypoints.push(e);
+                        console.log("If being run");
                     } else {
                         waypoints.splice(arrayIndex, 1, e);
+                        console.log("Else being run");
                     }
 
                     break;

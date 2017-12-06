@@ -214,6 +214,9 @@ $(document).ready(() => {
                     }
 
                     break;
+                default:
+                    console.log("Man, you really messed up if you're getting this message :(");
+                    break;
             }
         });
     }
@@ -244,6 +247,8 @@ $(document).ready(() => {
             let route = data.routes[0].geometry;
             let source = map.getSource("route");
 
+            // This "if" statement updates the route layer if it exists
+            // otherwise it adds the layer to the map
             if (source) {
                 console.log(source);
                 source.setData(route);
@@ -266,8 +271,8 @@ $(document).ready(() => {
                 });
             }
 
-            console.log(map);
-
+            // Removes all markers on the map so modifications can
+            // be made to the route without leaving leftovers
             for (let i = 0; i < mapPoints.markers.length; i++) {
                 mapPoints.markers[i].remove();
             }
@@ -281,6 +286,7 @@ $(document).ready(() => {
                 mapPoints.markers.push(a);
             });
 
+            // Fits the map to the bounds of the specific route retrieved
             let pathCoordinates = data.routes[0].geometry.coordinates;
 
             let bounds = pathCoordinates.reduce((bounds, coord) => {
@@ -332,6 +338,7 @@ $(document).ready(() => {
             showNextPage("sectionThree", "sectionTwo");
         } else {
             console.log("No Origin Set");
+            // handle this with a tooltip or something
         }
     });
 
@@ -347,9 +354,11 @@ $(document).ready(() => {
         e.preventDefault();
 
         let waypointInputs = document.getElementById("waypoints").children;
-
         mapPoints.waypoints = []; // Makes sure the array is empty
 
+        // Checks the input value of each "waypointInputs" field
+        // against the same index of the local "waypoints" array
+        // ensuring that fields left blank aren't added to the route
         for (let i = 0; i < waypointInputs.length; i++) {
             if (waypointInputs[i].children[1].value !== "") {
                 mapPoints.waypoints.push(waypoints[i]);
@@ -393,6 +402,7 @@ $(document).ready(() => {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints);
         } else {
             console.log("No Destination Set");
+            // handle this with a tooltip or something
         }
 
         console.log(mapPoints);

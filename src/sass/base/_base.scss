@@ -87,3 +87,14 @@ input {
     height: 20px;
     animation: none;
 }
+
+// Date Picker Overwriting
+
+.datepicker-container {
+    left: 50%!important;
+    transform: translateX(-50%);
+}
+
+.datepicker-panel li {
+    color: black; // Reset the datepicker text to black
+}

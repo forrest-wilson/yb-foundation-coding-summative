@@ -76,17 +76,27 @@ gulp.task("local-file-copy", () => {
     faFont = gulp.src("./node_modules/font-awesome/fonts/*.*")
         .pipe(gulp.dest("./temp/fonts/")),
 
-    // Tooltipster
+    // Tooltipster CSS
     tooltipsterCSS = gulp.src("./node_modules/tooltipster/dist/css/tooltipster.bundle.min.css")
         .pipe(gulp.dest("./temp/css/")),
 
+    // Tooltipster Theme CSS
     tooltipsterThemeCSS = gulp.src("./node_modules/tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-punk.min.css")
     .pipe(gulp.dest("./temp/css/")),
 
+    // Tooltipster JS
     tooltipsterJS = gulp.src("./node_modules/tooltipster/dist/js/tooltipster.bundle.min.js")
-        .pipe(gulp.dest("./temp/js/"))
+        .pipe(gulp.dest("./temp/js/")),
+    
+    // Date Picker JS
+    datePickerJS = gulp.src("./node_modules/@fengyuanchen/datepicker/dist/datepicker.min.js")
+        .pipe(gulp.dest("./temp/js/")),
 
-    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS);
+    // Date Picker CSS
+    datePickerCSS = gulp.src("./node_modules/@fengyuanchen/datepicker/dist/datepicker.min.css")
+        .pipe(gulp.dest("./temp/css/"));
+
+    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS);
 });
 
 // Copies the HTML files

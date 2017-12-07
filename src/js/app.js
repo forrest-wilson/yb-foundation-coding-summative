@@ -48,7 +48,14 @@ $(document).ready(() => {
         waypoints: [],
         destination: null,
         markers: []
-    }
+    };
+    let hireInfo = {
+        persons: null,
+        days: {
+            startDay: null,
+            endDay: null
+        }
+    };
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -57,7 +64,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionFive");
+        showFormPage("sectionSix");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -75,6 +82,7 @@ $(document).ready(() => {
             mapPoints.destination = null;
         });
 
+        // Tooltip initializer
         $(".tooltip").tooltipster({
             theme: "tooltipster-punk",
             trigger: "custom"
@@ -276,6 +284,7 @@ $(document).ready(() => {
         geocoder.on("result", (e) => {
             $("#origin").tooltipster("close");
             $("#destination").tooltipster("close");
+            $("#waypoints").tooltipster("close");
             switch (id) {
                 case "origin":
                     mapPoints.origin = e;
@@ -385,6 +394,7 @@ $(document).ready(() => {
             console.log(getRouteDistance(data.routes[0].distance));
             console.log(getRouteDuration(data.routes[0].duration));
 
+            // Callback for showing the next page once the ajax request has finished
             callback("sectionFive", "sectionFour");
         });
     }
@@ -477,8 +487,7 @@ $(document).ready(() => {
         if (valueArray.every((val) => { return val !== ""; })) {
             addGeocoder("waypoints", map, "Please enter a stop");
         } else {
-            console.log("Please finish entering the empty stops before adding more.");
-            // handle this with a tooltip or something
+            $("#waypoints").tooltipster("open");
         }
     });
 
@@ -503,26 +512,67 @@ $(document).ready(() => {
 
     // Section Five
 
-    $("#decreaseCounter").click(() => {
+    $("#decreasePeopleCounter").click((e) => {
+        e.preventDefault();
         $("#peopleCounter").tooltipster("close");
-        if ($("#counter").text() <= 1) {
+        if (parseInt($("#peopleCounterNumber").text()) <= 1) {
             $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
             $("#peopleCounter").tooltipster("open");
         } else {
-            let curText = $("#counter").text();
-            $("#counter").text(parseInt(curText) - 1);
+            let curText = $("#peopleCounterNumber").text();
+            $("#peopleCounterNumber").text(parseInt(curText) - 1);
         }
     });
 
-    $("#increaseCounter").click(() => {
+    $("#increasePeopleCounter").click((e) => {
+        e.preventDefault();
         $("#peopleCounter").tooltipster("close");
-        if (parseInt($("#counter").text()) >= 6) {
+        if (parseInt($("#peopleCounterNumber").text()) >= 6) {
             $("#peopleCounter").tooltipster("content", "You can't have more than 6 people");
             $("#peopleCounter").tooltipster("open");
         } else {
-            let curText = $("#counter").text();
-            $("#counter").text(parseInt(curText) + 1);
+            let curText = $("#peopleCounterNumber").text();
+            $("#peopleCounterNumber").text(parseInt(curText) + 1);
         }
+    });
+
+    $("#sectionFiveButtonNext").click((e) => {
+        e.preventDefault();
+        hireInfo.persons = $("#peopleCounterNumber").text();
+        console.log(hireInfo);
+        showNextPage("sectionSix", "sectionFive");
+    });
+
+    $("#sectionFiveButtonBack").click((e) => {
+        e.preventDefault();
+        showPreviousPage("sectionFour", "sectionFive");
+    });
+
+    // Section Six
+
+    // Date picker event handlers
+    $("[data-toggle='pickupDate']").on("pick.datepicker", (e) => {
+        console.log(e);
+        hireInfo.days.startDay = Date.parse(e.date);
+        console.log(hireInfo);
+    });
+
+    $("[data-toggle='returnDate']").on("pick.datepicker", (e) => {
+        console.log(e);
+        hireInfo.days.endDay = Date.parse(e.date);
+        console.log(hireInfo);
+    });
+
+    $("[data-toggle='pickupDate']").datepicker({
+        autoHide: true,
+        format: "dd/mm/yyyy",
+        startDate: new Date()
+    });
+
+    $("[data-toggle='returnDate']").datepicker({
+        autoHide: true,
+        format: "dd/mm/yyyy",
+        startDate: new Date()
     });
 
     // Journey Editing
@@ -558,7 +608,7 @@ $(document).ready(() => {
     });
 
     //
-    // AJAX Loading Handler
+    // AJAX Loading GIF Handler
     //
 
     $(document).ajaxStart(() => {

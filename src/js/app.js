@@ -57,6 +57,10 @@ $(document).ready(() => {
             totalDays: null
         }
     };
+    let routeInfo = {
+        data: null,
+        distance: null,
+    };
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -228,7 +232,8 @@ $(document).ready(() => {
         if (typeof decimals === "undefined") decimals = 1;
         let roundedNumber = Number(Math.round((distance / 1000) + "e" + decimals) + "e-" + decimals);
 
-        return roundedNumber + "km";
+        // Returns an array. Index 0 is a string and index 1 is a number
+        return [roundedNumber + "km", roundedNumber];
     }
 
     // Converts the route time from seconds to hours/minutes
@@ -330,7 +335,6 @@ $(document).ready(() => {
             method: "GET",
             url: request
         }).done((data) => {
-            console.log("Data", data);
             let route = data.routes[0].geometry;
             let source = map.getSource("route");
 
@@ -392,23 +396,43 @@ $(document).ready(() => {
                 }
             });
 
-            console.log(getRouteDistance(data.routes[0].distance));
-            console.log(getRouteDuration(data.routes[0].duration));
+            routeInfo.data = data;
 
             // Callback for showing the next page once the ajax request has finished
             callback();
         });
     }
 
-    function calcDays(originMs, destMs) {
+    // Calculate the recommended days for hire
+    function recommendedHireDays(totalDistance) {
+        let minDaysHire = 1; // Default minimum days for vehicle hire
+        let maxDistancePerDay = 400; // KM value
+        let recommendedHireDaysTotal = totalDistance / maxDistancePerDay;
+        let recommendedDays = null;
+
+        if (recommendedHireDaysTotal < 1) {
+            recommendedDays = 1; // If the total distance is less than the maxDistancePerDay variable, set the recommendedDays to 1
+        } else {
+            recommendedDays = Math.ceil(recommendedHireDaysTotal);
+        }
+
+        return recommendedDays;
+    }
+
+    // Calculates the number of days from 2 ms values
+    function calcDays(originMs, destMs, callback) {
         let daysMs = destMs - originMs;
         let days = daysMs / 86400000; // Converting ms to days
        
         if (days <= 0) {
-            console.log('');
+            // console.log("You can't have a hire for less than 1 day");
+            $("#datePickers").tooltipster("content", "You can't have a hire for less than 1 day");
+            $("#datePickers").tooltipster("open");
+        } else {
+            $("#datePickers").tooltipster("close");
+            hireInfo.days.totalDays = days;
+            callback();
         }
-
-        console.log(days);
     }
 
     ////////////////////////
@@ -511,6 +535,11 @@ $(document).ready(() => {
         if (mapPoints.destination) {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, () => {
                 showNextPage("sectionFive", "sectionFour");
+
+                let distance = getRouteDistance(routeInfo.data.routes[0].distance);
+                let hireDays = recommendedHireDays(distance[1]);
+
+                $("#minDaysHireSuggestion").text(hireDays);
             });
         } else {
             $("#destination").tooltipster("open");
@@ -601,8 +630,11 @@ $(document).ready(() => {
 
         if (hireInfo.days.startDay && hireInfo.days.endDay) {
             $("#datePickers").tooltipster("close");
-            calcDays(hireInfo.days.startDay, hireInfo.days.endDay);
-            showNextPage("sectionSeven", "sectionSix");
+
+            calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
+                showNextPage("sectionSeven", "sectionSix");
+            });
+
         } else {
             console.log("Please enter a start and end date");
             // handle error with tooltip

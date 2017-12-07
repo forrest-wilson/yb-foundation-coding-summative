@@ -65,7 +65,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionSix");
+        showFormPage("sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -396,8 +396,19 @@ $(document).ready(() => {
             console.log(getRouteDuration(data.routes[0].duration));
 
             // Callback for showing the next page once the ajax request has finished
-            callback("sectionFive", "sectionFour");
+            callback();
         });
+    }
+
+    function calcDays(originMs, destMs) {
+        let daysMs = destMs - originMs;
+        let days = daysMs / 86400000; // Converting ms to days
+       
+        if (days <= 0) {
+            console.log('');
+        }
+
+        console.log(days);
     }
 
     ////////////////////////
@@ -498,7 +509,9 @@ $(document).ready(() => {
         e.preventDefault();
 
         if (mapPoints.destination) {
-            getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, showNextPage);
+            getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, () => {
+                showNextPage("sectionFive", "sectionFour");
+            });
         } else {
             $("#destination").tooltipster("open");
         }
@@ -588,6 +601,7 @@ $(document).ready(() => {
 
         if (hireInfo.days.startDay && hireInfo.days.endDay) {
             $("#datePickers").tooltipster("close");
+            calcDays(hireInfo.days.startDay, hireInfo.days.endDay);
             showNextPage("sectionSeven", "sectionSix");
         } else {
             console.log("Please enter a start and end date");

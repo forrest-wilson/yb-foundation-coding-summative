@@ -5,6 +5,7 @@ const gulp = require("gulp"),
     autoprefixer = require("gulp-autoprefixer"),
     babel = require("gulp-babel"),
     uglify = require("gulp-uglify"),
+    concat = require("gulp-concat"),
     rename = require("gulp-rename"),
     htmlmin = require("gulp-htmlmin"),
     replace = require("gulp-replace"),
@@ -37,6 +38,7 @@ gulp.task("sass", () => {
 // ES5 to ES6 Compiler
 gulp.task("babel", () => {
     return gulp.src("./src/js/app.js")
+        // .pipe(concat("app_test.js"))
         .pipe(babel({
             presets: ["env"]
         }))

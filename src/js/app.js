@@ -53,7 +53,8 @@ $(document).ready(() => {
         persons: null,
         days: {
             startDay: null,
-            endDay: null
+            endDay: null,
+            totalDays: null
         }
     };
 
@@ -518,6 +519,9 @@ $(document).ready(() => {
         if (parseInt($("#peopleCounterNumber").text()) <= 1) {
             $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
             $("#peopleCounter").tooltipster("open");
+            setTimeout(() => {
+                $("#peopleCounter").tooltipster("close");
+            }, 2500);
         } else {
             let curText = $("#peopleCounterNumber").text();
             $("#peopleCounterNumber").text(parseInt(curText) - 1);
@@ -530,6 +534,9 @@ $(document).ready(() => {
         if (parseInt($("#peopleCounterNumber").text()) >= 6) {
             $("#peopleCounter").tooltipster("content", "You can't have more than 6 people");
             $("#peopleCounter").tooltipster("open");
+            setTimeout(() => {
+                $("#peopleCounter").tooltipster("close");
+            }, 2500);
         } else {
             let curText = $("#peopleCounterNumber").text();
             $("#peopleCounterNumber").text(parseInt(curText) + 1);
@@ -541,6 +548,7 @@ $(document).ready(() => {
         hireInfo.persons = $("#peopleCounterNumber").text();
         console.log(hireInfo);
         showNextPage("sectionSix", "sectionFive");
+        $("#peopleCounter").tooltipster("close");
     });
 
     $("#sectionFiveButtonBack").click((e) => {
@@ -551,28 +559,47 @@ $(document).ready(() => {
     // Section Six
 
     // Date picker event handlers
-    $("[data-toggle='pickupDate']").on("pick.datepicker", (e) => {
+    $("[data-toggle=\"pickupDate\"]").on("pick.datepicker", (e) => {
         console.log(e);
         hireInfo.days.startDay = Date.parse(e.date);
         console.log(hireInfo);
     });
 
-    $("[data-toggle='returnDate']").on("pick.datepicker", (e) => {
+    $("[data-toggle=\"returnDate\"]").on("pick.datepicker", (e) => {
         console.log(e);
         hireInfo.days.endDay = Date.parse(e.date);
         console.log(hireInfo);
     });
 
-    $("[data-toggle='pickupDate']").datepicker({
+    $("[data-toggle=\"pickupDate\"]").datepicker({
         autoHide: true,
         format: "dd/mm/yyyy",
         startDate: new Date()
     });
 
-    $("[data-toggle='returnDate']").datepicker({
+    $("[data-toggle=\"returnDate\"]").datepicker({
         autoHide: true,
         format: "dd/mm/yyyy",
         startDate: new Date()
+    });
+
+    $("#sectionSixButtonNext").click((e) => {
+        e.preventDefault();
+
+        if (hireInfo.days.startDay && hireInfo.days.endDay) {
+            $("#datePickers").tooltipster("close");
+            showNextPage("sectionSeven", "sectionSix");
+        } else {
+            console.log("Please enter a start and end date");
+            // handle error with tooltip
+            $("#datePickers").tooltipster("open");
+        }
+    });
+
+    $("#sectionSixButtonBack").click((e) => {
+        e.preventDefault();
+
+        showPreviousPage("sectionFive", "sectionSix");
     });
 
     // Journey Editing

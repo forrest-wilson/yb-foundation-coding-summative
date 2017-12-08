@@ -61,6 +61,7 @@ $(document).ready(() => {
         data: null,
         distance: null,
     };
+    let vehicleInfo = null;
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -69,7 +70,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionOne");
+        showFormPage("sectionSix");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -92,6 +93,13 @@ $(document).ready(() => {
             theme: "tooltipster-punk",
             trigger: "custom"
         });
+
+        // Slick initializer
+        $(".vehicle-options").slick({
+            arrows: false,
+            centerMode: true,
+            slidesToShow: 1
+        });
     };
 
     // Updates the global screen dimension variables
@@ -113,17 +121,17 @@ $(document).ready(() => {
         }
     }
 
-    function toggleNewJourneyConfirmation() {
-        if (newJourneyConfirmationShowing) {
-            $("#mask").fadeOut(transitionTime);
-            $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
-            newJourneyConfirmationShowing = false;
-        } else {
-            $("#mask").fadeIn(transitionTime);
-            $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
-            newJourneyConfirmationShowing = true;
-        }
-    }
+    // function toggleNewJourneyConfirmation() {
+    //     if (newJourneyConfirmationShowing) {
+    //         $("#mask").fadeOut(transitionTime);
+    //         $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
+    //         newJourneyConfirmationShowing = false;
+    //     } else {
+    //         $("#mask").fadeIn(transitionTime);
+    //         $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
+    //         newJourneyConfirmationShowing = true;
+    //     }
+    // }
 
     // Toggles the background image based on the backgroundImageIsShowing boolean
     function toggleBackgroundImage() {
@@ -227,6 +235,16 @@ $(document).ready(() => {
         });
     }
 
+    // Generic AJAX GET function
+    function xhrGet(url, callback) {
+        $.ajax({
+            method: "GET",
+            url: url
+        }).done((data) => {
+            if (typeof callback !== "undefined") callback(data);
+        });
+    }
+
     // Converts a number into a "km" string
     function getRouteDistance(distance, decimals) {
         if (typeof decimals === "undefined") decimals = 1;
@@ -304,7 +322,6 @@ $(document).ready(() => {
                     } else {
                         waypoints.splice(arrayIndex, 1, e);
                     }
-
                     break;
                 default:
                     console.log("Man, you really messed up if you're getting this message :(");
@@ -331,10 +348,7 @@ $(document).ready(() => {
         // End the request with access token
         request += "&access_token=" + mapboxgl.accessToken;
 
-        $.ajax({
-            method: "GET",
-            url: request
-        }).done((data) => {
+        xhrGet(request, (data) => {
             let route = data.routes[0].geometry;
             let source = map.getSource("route");
 
@@ -396,22 +410,25 @@ $(document).ready(() => {
                 }
             });
 
+            // Makes the returned data globally available
             routeInfo.data = data;
 
             // Callback for showing the next page once the ajax request has finished
-            callback();
-        });
+            if (typeof callback !== "undefined") callback();
+        }); 
     }
 
     // Calculate the recommended days for hire
     function recommendedHireDays(totalDistance) {
         let minDaysHire = 1; // Default minimum days for vehicle hire
-        let maxDistancePerDay = 400; // KM value
+        let maxDistancePerDay = 450; // KM value
         let recommendedHireDaysTotal = totalDistance / maxDistancePerDay;
         let recommendedDays = null;
 
         if (recommendedHireDaysTotal < 1) {
             recommendedDays = 1; // If the total distance is less than the maxDistancePerDay variable, set the recommendedDays to 1
+        } else if (recommendedHireDaysTotal >= 7) {
+            recommendedDays = 7;
         } else {
             recommendedDays = Math.ceil(recommendedHireDaysTotal);
         }
@@ -605,21 +622,17 @@ $(document).ready(() => {
         console.log(e);
         hireInfo.days.startDay = Date.parse(e.date);
         console.log(hireInfo);
+        $("[data-toggle=\"returnDate\"]").datepicker("setStartDate", new Date(hireInfo.days.startDay));
     });
 
     $("[data-toggle=\"returnDate\"]").on("pick.datepicker", (e) => {
         console.log(e);
         hireInfo.days.endDay = Date.parse(e.date);
         console.log(hireInfo);
+        $("[data-toggle=\"pickupDate\"]").datepicker("setEndDate", new Date(hireInfo.days.endDay));
     });
 
-    $("[data-toggle=\"pickupDate\"]").datepicker({
-        autoHide: true,
-        format: "dd/mm/yyyy",
-        startDate: new Date()
-    });
-
-    $("[data-toggle=\"returnDate\"]").datepicker({
+    $("[data-toggle=\"pickupDate\"], [data-toggle=\"returnDate\"]").datepicker({
         autoHide: true,
         format: "dd/mm/yyyy",
         startDate: new Date()
@@ -646,6 +659,14 @@ $(document).ready(() => {
         e.preventDefault();
 
         showPreviousPage("sectionFive", "sectionSix");
+    });
+
+    // Section Seven
+
+    $("#sectionSevenButtonBack").click((e) => {
+        e.preventDefault();
+
+        showPreviousPage("sectionSix", "sectionSeven");
     });
 
     // Journey Editing

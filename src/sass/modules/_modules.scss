@@ -238,6 +238,8 @@
 .vehicle-options {
     .vehicle-option {
         margin: 5px;
+        width: 100%!important; // Slick width workaround
+        outline: 0;
 
         .outer {
             width: 100%;
@@ -256,5 +258,10 @@
                 }
             }
         }
+    }
+
+    // Slick width workaround
+    .slick-track {
+        width: 100%!important;
     }
 }

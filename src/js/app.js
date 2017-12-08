@@ -70,7 +70,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionSix");
+        showFormPage("sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -189,8 +189,8 @@ $(document).ready(() => {
 
     // Returns the application to it's default state
     function returnToDefaults() {
-        let allGeocoders = document.getElementsByClassName("mapboxgl-ctrl-geocoder");
-        let waypointInputs = document.getElementById("waypoints").children;
+        let allGeocoders = $(".mapboxgl-ctrl-geocoder");
+        let waypointInputs = $("#waypoints").children();
 
         // Removes all map markers from the map
         for (let i = 0; i < mapPoints.markers.length; i++) {
@@ -639,12 +639,18 @@ $(document).ready(() => {
             $("#datePickers").tooltipster("close");
 
             calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
-                showNextPage("sectionSeven", "sectionSix");
+                xhrGet("./ajax/vehicle_template.html", (data) => {
+                    console.log(data);
+
+                    // Workaround for the request being too fast for the animation
+                    // Might not work as intended???
+                    setTimeout(() => {
+                        showNextPage("sectionSeven", "sectionSix");
+                    }, transitionTime * 2);
+                });
             });
 
         } else {
-            console.log("Please enter a start and end date");
-            // handle error with tooltip
             $("#datePickers").tooltipster("open");
         }
     });

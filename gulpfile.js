@@ -123,7 +123,7 @@ gulp.task("local-file-copy", () => {
 
 // Copies the HTML files
 gulp.task("html-min", () => {
-    return gulp.src("./src/*.html")
+    return gulp.src(["./src/*.html", "./src/ajax/*.*"], { base: "./src/" })
         .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true

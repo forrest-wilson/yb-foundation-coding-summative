@@ -102,12 +102,6 @@ $(document).ready(() => {
         });
     };
 
-    // Updates the global screen dimension variables
-    function updateScreenDimensions() {
-        $windowHeight = $(window).height();
-        $windowWidth = $(window).width();
-    }
-
     // Toggles the how do i work overlay
     function toggleHowDoIWorkOverlay() {
         if (howDoIWorkOverlayShowing) {
@@ -691,14 +685,6 @@ $(document).ready(() => {
 
     $("#declineNewJourney").click((e) => {
         toggleNewJourneyConfirmation();
-    });
-
-    //
-    // Window Resize Handler
-    //
-
-    $(window).on("resize", () => {
-        updateScreenDimensions();
     });
 
     //

@@ -102,15 +102,23 @@ gulp.task("local-file-copy", () => {
     slickCSS = gulp.src("./node_modules/slick-carousel/slick/slick.css")
         .pipe(gulp.dest("./temp/css/slick/")),
 
-    // Slick CSS
+    // Slick Theme CSS
     slickThemeCSS = gulp.src("./node_modules/slick-carousel/slick/slick-theme.css")
         .pipe(gulp.dest("./temp/css/slick/")),
 
-    // Slick CSS
+    // Slick JS
     slickJS = gulp.src("./node_modules/slick-carousel/slick/slick.min.js")
-        .pipe(gulp.dest("./temp/js/slick/"));
+        .pipe(gulp.dest("./temp/js/slick/")),
 
-    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS, slickCSS, slickThemeCSS, slickJS);
+    // Slick Fonts
+    slickFonts = gulp.src("./node_modules/slick-carousel/slick/fonts/*.*")
+        .pipe(gulp.dest("./temp/css/slick/fonts/")),
+
+    // Slick AJAX Loader
+    slickAjaxLoader = gulp.src("./node_modules/slick-carousel/slick/ajax-loader.gif")
+        .pipe(gulp.dest("./temp/css/slick/"));
+
+    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS, slickCSS, slickThemeCSS, slickJS, slickFonts, slickAjaxLoader);
 });
 
 // Copies the HTML files

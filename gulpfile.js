@@ -96,9 +96,21 @@ gulp.task("local-file-copy", () => {
 
     // Date Picker CSS
     datePickerCSS = gulp.src("./node_modules/@fengyuanchen/datepicker/dist/datepicker.min.css")
-        .pipe(gulp.dest("./temp/css/"));
+        .pipe(gulp.dest("./temp/css/")),
 
-    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS);
+    // Slick CSS
+    slickCSS = gulp.src("./node_modules/slick-carousel/slick/slick.css")
+        .pipe(gulp.dest("./temp/css/slick/")),
+
+    // Slick CSS
+    slickThemeCSS = gulp.src("./node_modules/slick-carousel/slick/slick-theme.css")
+        .pipe(gulp.dest("./temp/css/slick/")),
+
+    // Slick CSS
+    slickJS = gulp.src("./node_modules/slick-carousel/slick/slick.min.js")
+        .pipe(gulp.dest("./temp/js/slick/"));
+
+    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS, slickCSS, slickThemeCSS, slickJS);
 });
 
 // Copies the HTML files

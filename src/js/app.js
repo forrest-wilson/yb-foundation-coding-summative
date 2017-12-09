@@ -659,15 +659,15 @@ $(document).ready(() => {
                         let vehicleMatches = [];
 
                         // Adds objects that match the conditions to seperate arrays
-                        for (let key in allVehicles) {
-                            if (hireInfo.days.totalDays >= allVehicles[key].hireDays.min && hireInfo.days.totalDays <= allVehicles[key].hireDays.max) {
-                                daysMatch.push(allVehicles[key]);
+                        for (let i in allVehicles) {
+                            if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
+                                daysMatch.push(allVehicles[i]);
                             } else {
                                 daysMatch.push(false);
                             }
 
-                            if (hireInfo.persons >= allVehicles[key].persons.min && hireInfo.persons <= allVehicles[key].persons.max) {
-                                personsMatch.push(allVehicles[key]);
+                            if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
+                                personsMatch.push(allVehicles[i]);
                             } else {
                                 personsMatch.push(false);
                             }
@@ -675,22 +675,23 @@ $(document).ready(() => {
 
                         // Attempts to find matches and appends any that do match
                         // to an array that holds objects that pass both conditions
-                        for (let i = 0; i < allVehicles.length; i++) {
+                        for (let i in allVehicles) {
                             if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
                                 vehicleMatches.push(allVehicles[i]);
                             }
                         }
 
-                        for (let j = 0; j < vehicleMatches.length; j++) {
+                        // Sets the attributes of the vehicleMatches to
+                        // properties fetched from the vehicleInfo.json file
+                        for (let i in vehicleMatches) {
                             let template = $.parseHTML(htmlVehicleTemplate)[0];
-
-                            template.setAttribute("id", vehicleMatches[j].vehicle);
-
                             let settableEls = template.children[0].children[0];
 
-                            settableEls.children[0].textContent = vehicleMatches[j].name;
-                            settableEls.children[1].setAttribute("src", vehicleMatches[j].imageURL);
-                            settableEls.children[2].textContent = "$" + vehicleMatches[j].dailyRate + ".00/day";
+                            template.setAttribute("id", vehicleMatches[i].vehicle);
+
+                            settableEls.children[0].textContent = vehicleMatches[i].name;
+                            settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
+                            settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
 
                             $(".vehicle-options").slick("slickAdd", template);
                         }

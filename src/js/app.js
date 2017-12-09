@@ -700,6 +700,7 @@ $(document).ready(() => {
                             showNextPage("sectionSeven", "sectionSix");
                             $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
                             
+                            // Slick rendering issue workaround
                             if (vehicleMatches.length === 1) {
                                 $(".slick-track").css("width", "auto");
                                 $(".vehicle-option").css("width", "auto");

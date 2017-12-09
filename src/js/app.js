@@ -37,31 +37,40 @@ $(document).ready(() => {
     });
 
     // Mutable variables
-    let $windowHeight = $(window).height();
-    let $windowWidth = $(window).width();
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
     let newJourneyConfirmationShowing = false;
     let waypoints = [];
+
+    // Map properties
     let mapPoints = {
         origin: null,
         waypoints: [],
         destination: null,
         markers: []
     };
+
+    // Vehicle hire properties
     let hireInfo = {
         persons: null,
         days: {
             startDay: null,
             endDay: null,
             totalDays: null
-        }
+        },
+        vehicleOptions: {}
     };
+
+    // Route properties
     let routeInfo = {
         data: null,
-        distance: null,
+        distance: null
     };
+
+    // JSON from vehicleInfo.json
     let vehicleInfo = null;
+
+    let htmlVehicleTemplate = null;
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -70,7 +79,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionOne");
+        showFormPage("sectionFive");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -639,14 +648,54 @@ $(document).ready(() => {
             $("#datePickers").tooltipster("close");
 
             calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
-                xhrGet("./ajax/vehicle_template.html", (data) => {
-                    console.log(data);
+                // Gets the HTML template
+                xhrGet("./ajax/vehicle_template.html", (templateData) => {
+                    htmlVehicleTemplate = templateData
+                    console.log(htmlVehicleTemplate);
 
-                    // Workaround for the request being too fast for the animation
-                    // Might not work as intended???
-                    setTimeout(() => {
-                        showNextPage("sectionSeven", "sectionSix");
-                    }, transitionTime * 2);
+                    xhrGet("./json/vehicleInfo.json", (jsonData) => {
+                        vehicleInfo = jsonData;
+                        console.log(vehicleInfo);
+
+                        // Do some fancy calculations here
+
+                        let allVehicles = vehicleInfo.vehicles; // array
+                        let tempArray = [];
+                        let tempArray2 = [];
+                        let passed = [];
+
+                        // Searches through to compare against hire length (days)
+                        for (let key in allVehicles) {
+                            console.log(allVehicles[key]);
+
+                            if (hireInfo.days.totalDays >= allVehicles[key].hireDays.min && hireInfo.days.totalDays <= allVehicles[key].hireDays.max) {
+                                tempArray.push(allVehicles[key]);
+                            } else {
+                                tempArray.push(false);
+                            }
+
+                            if (hireInfo.persons >= allVehicles[key].persons.min && hireInfo.persons <= allVehicles[key].persons.max) {
+                                tempArray2.push(allVehicles[key]);
+                            } else {
+                                tempArray2.push(false);
+                            }
+                        }
+
+                        for (let i = 0; i < allVehicles.length; i++) {
+                            if (tempArray[i] === tempArray2[i]) {
+                                passed.push(allVehicles[i]);
+                            }
+                        }
+
+                        console.log(tempArray);
+                        console.log(tempArray2);
+                        console.log(passed);
+
+                        // Workaround for the request being too fast for the animation
+                        setTimeout(() => {
+                            showNextPage("sectionSeven", "sectionSix");
+                        }, transitionTime);
+                    });
                 });
             });
 

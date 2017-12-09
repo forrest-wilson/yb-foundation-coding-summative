@@ -57,8 +57,7 @@ $(document).ready(() => {
             startDay: null,
             endDay: null,
             totalDays: null
-        },
-        vehicleOptions: {}
+        }
     };
 
     // Route properties
@@ -107,7 +106,10 @@ $(document).ready(() => {
         $(".vehicle-options").slick({
             arrows: false,
             centerMode: true,
-            slidesToShow: 1
+            slidesToShow: 1,
+            infinite: false,
+            autoplay: true,
+            autoplaySpeed: 1
         });
     };
 
@@ -608,7 +610,6 @@ $(document).ready(() => {
     $("#sectionFiveButtonNext").click((e) => {
         e.preventDefault();
         hireInfo.persons = $("#peopleCounterNumber").text();
-        console.log(hireInfo);
         showNextPage("sectionSix", "sectionFive");
         $("#peopleCounter").tooltipster("close");
     });
@@ -622,14 +623,11 @@ $(document).ready(() => {
 
     // Date picker event handlers
     $("[data-toggle=\"pickupDate\"]").on("pick.datepicker", (e) => {
-        console.log(e);
         hireInfo.days.startDay = Date.parse(e.date);
-        console.log(hireInfo);
         $("[data-toggle=\"returnDate\"]").datepicker("setStartDate", new Date(hireInfo.days.startDay));
     });
 
     $("[data-toggle=\"returnDate\"]").on("pick.datepicker", (e) => {
-        console.log(e);
         hireInfo.days.endDay = Date.parse(e.date);
         console.log(hireInfo);
         $("[data-toggle=\"pickupDate\"]").datepicker("setEndDate", new Date(hireInfo.days.endDay));
@@ -651,23 +649,17 @@ $(document).ready(() => {
                 // Gets the HTML template
                 xhrGet("./ajax/vehicle_template.html", (templateData) => {
                     htmlVehicleTemplate = templateData
-                    console.log(htmlVehicleTemplate);
 
                     xhrGet("./json/vehicleInfo.json", (jsonData) => {
                         vehicleInfo = jsonData;
-                        console.log(vehicleInfo);
-
-                        // Do some fancy calculations here
 
                         let allVehicles = vehicleInfo.vehicles; // array
                         let daysMatch = [];
                         let personsMatch = [];
                         let vehicleMatches = [];
 
-                        // Searches through to compare against hire length (days)
+                        // Adds objects that match the conditions to seperate arrays
                         for (let key in allVehicles) {
-                            console.log(allVehicles[key]);
-
                             if (hireInfo.days.totalDays >= allVehicles[key].hireDays.min && hireInfo.days.totalDays <= allVehicles[key].hireDays.max) {
                                 daysMatch.push(allVehicles[key]);
                             } else {
@@ -681,20 +673,35 @@ $(document).ready(() => {
                             }
                         }
 
+                        // Attempts to find matches and appends any that do match
+                        // to an array that holds objects that pass both conditions
                         for (let i = 0; i < allVehicles.length; i++) {
                             if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
                                 vehicleMatches.push(allVehicles[i]);
                             }
                         }
 
-                        console.log(daysMatch);
-                        console.log(personsMatch);
-                        console.log(vehicleMatches);
+                        for (let j = 0; j < vehicleMatches.length; j++) {
+                            let template = $.parseHTML(htmlVehicleTemplate)[0];
+
+                            template.setAttribute("id", vehicleMatches[j].vehicle);
+
+                            let settableEls = template.children[0].children[0];
+
+                            settableEls.children[0].textContent = vehicleMatches[j].name;
+                            settableEls.children[1].setAttribute("src", vehicleMatches[j].imageURL);
+                            settableEls.children[2].textContent = "$" + vehicleMatches[j].dailyRate + ".00/day";
+
+                            $(".vehicle-options").slick("slickAdd", template);
+                        }
 
                         // Workaround for the request being too fast for the animation
                         setTimeout(() => {
                             showNextPage("sectionSeven", "sectionSix");
+                            $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
                         }, transitionTime);
+
+                        $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
                     });
                 });
             });
@@ -714,6 +721,11 @@ $(document).ready(() => {
 
     $("#sectionSevenButtonBack").click((e) => {
         e.preventDefault();
+
+        // Removes all slides from slick
+        for (let i in $(".vehicle-option")) {
+            $(".vehicle-options").slick("slickRemove", 0);
+        }
 
         showPreviousPage("sectionSix", "sectionSeven");
     });

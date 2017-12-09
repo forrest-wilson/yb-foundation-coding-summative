@@ -45,6 +45,7 @@
                             padding: 10px 40px;
                             text-align: center;
                             color: white;
+                            cursor: pointer;
 
                             &::-webkit-input-placeholder {
                                 color: white;
@@ -138,6 +139,14 @@
                 span {
                     margin: 0 auto;
                 }
+            }
+        }
+    }
+
+    .section-seven {
+        .inner {
+            .btn-back {
+                width: calc(100% - 20px);
             }
         }
     }
@@ -238,7 +247,6 @@
 .vehicle-options {
     .vehicle-option {
         margin: 5px;
-        width: 100%!important; // Slick width workaround
         outline: 0;
 
         .outer {
@@ -255,13 +263,9 @@
                     max-width: 100%;
                     max-height: 200px;
                     margin: 0 auto;
+                    display: block;
                 }
             }
         }
-    }
-
-    // Slick width workaround
-    .slick-track {
-        width: 100%!important;
     }
 }

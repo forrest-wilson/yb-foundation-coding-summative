@@ -699,6 +699,11 @@ $(document).ready(() => {
                         setTimeout(() => {
                             showNextPage("sectionSeven", "sectionSix");
                             $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
+                            
+                            if (vehicleMatches.length === 1) {
+                                $(".slick-track").css("width", "auto");
+                                $(".vehicle-option").css("width", "auto");
+                            }
                         }, transitionTime);
 
                         $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround

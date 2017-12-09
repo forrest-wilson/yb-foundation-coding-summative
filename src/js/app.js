@@ -147,7 +147,7 @@ $(document).ready(() => {
         }
     }
 
-    // Shows a form page depending on what id is passed to it
+    // Shows a form page depending on what id is vehicleMatches to it
     function showFormPage(id) {
         let elToShow = document.getElementById(id);
 
@@ -660,36 +660,36 @@ $(document).ready(() => {
                         // Do some fancy calculations here
 
                         let allVehicles = vehicleInfo.vehicles; // array
-                        let tempArray = [];
-                        let tempArray2 = [];
-                        let passed = [];
+                        let daysMatch = [];
+                        let personsMatch = [];
+                        let vehicleMatches = [];
 
                         // Searches through to compare against hire length (days)
                         for (let key in allVehicles) {
                             console.log(allVehicles[key]);
 
                             if (hireInfo.days.totalDays >= allVehicles[key].hireDays.min && hireInfo.days.totalDays <= allVehicles[key].hireDays.max) {
-                                tempArray.push(allVehicles[key]);
+                                daysMatch.push(allVehicles[key]);
                             } else {
-                                tempArray.push(false);
+                                daysMatch.push(false);
                             }
 
                             if (hireInfo.persons >= allVehicles[key].persons.min && hireInfo.persons <= allVehicles[key].persons.max) {
-                                tempArray2.push(allVehicles[key]);
+                                personsMatch.push(allVehicles[key]);
                             } else {
-                                tempArray2.push(false);
+                                personsMatch.push(false);
                             }
                         }
 
                         for (let i = 0; i < allVehicles.length; i++) {
-                            if ((tempArray[i] === tempArray2[i]) && (tempArray[i] && tempArray2[i] !== false)) {
-                                passed.push(allVehicles[i]);
+                            if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
+                                vehicleMatches.push(allVehicles[i]);
                             }
                         }
 
-                        console.log(tempArray);
-                        console.log(tempArray2);
-                        console.log(passed);
+                        console.log(daysMatch);
+                        console.log(personsMatch);
+                        console.log(vehicleMatches);
 
                         // Workaround for the request being too fast for the animation
                         setTimeout(() => {

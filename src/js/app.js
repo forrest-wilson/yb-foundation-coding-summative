@@ -682,7 +682,7 @@ $(document).ready(() => {
                         }
 
                         for (let i = 0; i < allVehicles.length; i++) {
-                            if (tempArray[i] === tempArray2[i]) {
+                            if ((tempArray[i] === tempArray2[i]) && (tempArray[i] && tempArray2[i] !== false)) {
                                 passed.push(allVehicles[i]);
                             }
                         }

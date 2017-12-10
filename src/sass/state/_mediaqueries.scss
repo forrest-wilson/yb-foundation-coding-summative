@@ -4,6 +4,38 @@
 
 // Width Queries
 
+@media screen and (min-width: 740px) {
+    .slick-next,
+    .slick-prev {
+        display: block!important;
+        z-index: 200; // Makes sure the arrows are always sitting on top
+        width: 50px;
+        height: 50px;
+        text-align: center;
+
+        &:before{
+            font-family: "FontAwesome";
+            font-size: 50px;
+        }
+    }
+
+    .slick-next {
+        right: 11%;
+
+        &:before {
+            content: "\f105"!important;
+        }
+    }
+
+    .slick-prev {
+        left: 11%;
+
+        &:before {
+            content: "\f104"!important;
+        }
+    }
+}
+
 @media screen and (min-width: 800px) {
     .main {
         .section {
@@ -25,5 +57,44 @@
         @include positioning(fixed, $t: 50%!important, $b: auto!important, $l: 50%!important, $r: auto!important);
         transform: translateX(-50%) translateY(-50%);
         width: 100%;
+    }
+}
+
+@media screen and (min-height: 730px) {
+    .vehicle-options {
+        @include positioning(absolute, $t: 50%, $l: 0, $r: 0);
+        transform: translate(0, -50%);
+    }
+}
+
+@media screen and (min-height: 800px) {
+    .more-vehicle-info-popup {
+        margin: auto!important;
+    }
+}
+
+@media screen and (min-height: 800px) and (min-width: 600px) {
+    .more-vehicle-info-popup {
+        max-width: 600px!important;
+        max-height: 540px!important;
+
+        .journey-wrapper {
+            float: left;
+        }
+
+        .avis-wrapper {
+            float: right;
+        }
+
+        .journey-wrapper,
+        .avis-wrapper {
+            width: 50%;
+
+            &:after {
+                clear: both;
+                content: "";
+                display: table;
+            }
+        }
     }
 }

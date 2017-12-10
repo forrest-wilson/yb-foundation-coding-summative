@@ -105,7 +105,9 @@ $(document).ready(() => {
 
         // Slick initializer
         $(".vehicle-options").slick({
-            arrows: false,
+            arrows: true,
+            prevArrow: "<i class=\"fa fa-angle-left slick-prev\">Previous</i>",
+            nextArrow: "<i class=\"fa fa-angle-right slick-next\">Previous</i>",
             centerMode: true,
             slidesToShow: 1,
             infinite: false,
@@ -388,12 +390,8 @@ $(document).ready(() => {
                     "id": "route",
                     "type": "line",
                     "source": "route",
-                    "layout": {
-                        "visibility": "visible"
-                    },
-                    "paint": {
-                        "line-width": 2
-                    }
+                    "layout": { "visibility": "visible" },
+                    "paint": { "line-width": 2 }
                 });
             }
 
@@ -491,7 +489,7 @@ $(document).ready(() => {
                 popupBaseDir.children[2].setAttribute("src", info.imageURL);
 
                 for (let j in thingsToDo) {
-                    popupBaseDir.children[4].children[0].children[j].children[1].textContent = thingsToDo[j];
+                    popupBaseDir.children[3].children[1].children[0].children[j].children[1].textContent = thingsToDo[j];
                 }
             }
         }

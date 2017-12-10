@@ -98,3 +98,10 @@ input {
 .datepicker-panel li {
     color: black; // Reset the datepicker text to black
 }
+
+// Slick Default configuration
+
+.slick-prev,
+.slick-next {
+    display: none;
+}

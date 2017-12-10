@@ -177,7 +177,6 @@ $(document).ready(() => {
 
     // Shows the next page and hides the current page
     function showNextPage(idToShow, idToHide) {
-        let elToShow = document.getElementById(idToShow);
         let elToHide = document.getElementById(idToHide);
 
         elToHide.style.transform = "scale(" + scaleFactor + ")";

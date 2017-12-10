@@ -39,6 +39,7 @@ $(document).ready(() => {
     // Mutable variables
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
+    let vehicleOverlayShowing = false;
     let newJourneyConfirmationShowing = false;
     let waypoints = [];
 
@@ -78,7 +79,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionFive");
+        showFormPage("sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -146,6 +147,19 @@ $(document).ready(() => {
         } else {
             $("#backgroundImage").fadeIn(transitionTime);
             backgroundImageIsShowing = true;
+        }
+    }
+
+    // Toggles the modal popup displaying vehicle information
+    function toggleVehicleOverlay() {
+        if (vehicleOverlayShowing) {
+            $("#moreVehicleInfoPopup").fadeOut(transitionTime);
+            $("#mask").fadeOut(transitionTime);
+            vehicleOverlayShowing = false;
+        } else {
+            $("#moreVehicleInfoPopup").fadeIn(transitionTime);
+            $("#mask").fadeIn(transitionTime);
+            vehicleOverlayShowing = true;
         }
     }
 
@@ -447,7 +461,6 @@ $(document).ready(() => {
         let days = daysMs / 86400000; // Converting ms to days
        
         if (days <= 0) {
-            // console.log("You can't have a hire for less than 1 day");
             $("#datePickers").tooltipster("content", "You can't have a hire for less than 1 day");
             $("#datePickers").tooltipster("open");
         } else {
@@ -455,6 +468,36 @@ $(document).ready(() => {
             hireInfo.days.totalDays = days;
             callback();
         }
+    }
+
+    // Calculates the fuel cost of the journey
+    function calculateFuelCost(pricePerLitre, vehicleMileage, tripDistance) {
+        let fuelCost = pricePerLitre * (vehicleMileage/100) * tripDistance;
+        return ["$" + fuelCost.toFixed(2) + " NZD", parseFloat(fuelCost.toFixed(2))];
+    }
+
+    // Shows a modal overlay based on the ajax data retrieved from vehicleInfo.json
+    function populateVehicalModal(jsonData, vehicleId, callback) {
+        for (let i in jsonData.vehicles) {
+            if (jsonData.vehicles[i].vehicle === vehicleId) {
+                let info = jsonData.vehicles[i];
+                let popupBaseDir = $("#moreVehicleInfoPopup")[0].children[0];
+                let fuelCost = calculateFuelCost(jsonData.fuelPrice, info.mileage, routeInfo.distance[1]);
+                let hireCost = hireInfo.days.totalDays * info.dailyRate;
+                let totalCost = fuelCost[1] + hireCost;
+
+                let thingsToDo = [routeInfo.distance[0], hireInfo.persons + " person(s)", hireInfo.days.totalDays + " day(s)", "$" + hireCost + ".00 NZD", "Daily Rate x Hire Duration", fuelCost[0], "$" + jsonData.fuelPrice + "/litre x " + info.mileage + "/100km x " + routeInfo.distance[0], "$" + totalCost + " NZD"];
+
+                popupBaseDir.children[1].textContent = info.name;
+                popupBaseDir.children[2].setAttribute("src", info.imageURL);
+
+                for (let j in thingsToDo) {
+                    popupBaseDir.children[4].children[0].children[j].children[1].textContent = thingsToDo[j];
+                }
+            }
+        }
+
+        if (typeof callback !== "undefined") callback();
     }
 
     ////////////////////////
@@ -560,6 +603,8 @@ $(document).ready(() => {
 
                 let distance = getRouteDistance(routeInfo.data.routes[0].distance);
                 let hireDays = recommendedHireDays(distance[1]);
+
+                routeInfo.distance = distance;
 
                 $("#minDaysHireSuggestion").text(hireDays);
             });
@@ -692,6 +737,7 @@ $(document).ready(() => {
                             settableEls.children[0].textContent = vehicleMatches[i].name;
                             settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
                             settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
+                            settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
 
                             $(".vehicle-options").slick("slickAdd", template);
                         }
@@ -735,6 +781,45 @@ $(document).ready(() => {
         }
 
         showPreviousPage("sectionSix", "sectionSeven");
+    });
+
+    // Modal Overlay Buttons
+
+    $(document).on("click", "#motorbikeMoreInfo", (e) => {
+        e.preventDefault();
+
+        populateVehicalModal(vehicleInfo, "motorbike", () => {
+            toggleVehicleOverlay();
+        });
+    });
+
+    $(document).on("click", "#smallCarMoreInfo", (e) => {
+        e.preventDefault();
+
+        populateVehicalModal(vehicleInfo, "smallCar", () => {
+            toggleVehicleOverlay();
+        });
+    });
+
+    $(document).on("click", "#largeCarMoreInfo", (e) => {
+        e.preventDefault();
+
+        populateVehicalModal(vehicleInfo, "largeCar", () => {
+            toggleVehicleOverlay();
+        });
+    });
+
+    $(document).on("click", "#motorHomeMoreInfo", (e) => {
+        e.preventDefault();
+
+        populateVehicalModal(vehicleInfo, "motorHome", () => {
+            toggleVehicleOverlay();
+        });
+    });
+
+    $("#moreVehicleInfoPopupClose").click((e) => {
+        e.preventDefault();
+        toggleVehicleOverlay();
     });
 
     // Journey Editing

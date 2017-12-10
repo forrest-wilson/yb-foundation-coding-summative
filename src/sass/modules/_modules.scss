@@ -201,26 +201,69 @@
         padding: 15px;
         position: relative;
         overflow: scroll;
+    }
+}
 
-        .close-button {
-            font-size: 24px;
-            float: right;
-            cursor: pointer;
+.how-do-i-work-popup,
+.more-vehicle-info-popup,
+.new-journey-confirmation-popup {
+    .inner {
+        background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
+        border-radius: $borderRadius;
+    }
+}
 
-            &:after {
-                content: "";
-                display: table;
-                clear: both;
+.more-vehicle-info-popup {
+    @include positioning(fixed, 0, 0, 0, 0);
+    z-index: 200; // Makes sure it's above all the other content
+    text-align: center;
+    max-width: 420px;
+    margin: 0 auto;
+    display: none;
+    max-height: 800px;
+
+    .inner {
+        padding: 15px;
+        position: relative;
+        overflow: scroll;
+        height: 100%;
+
+        img {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        table {
+            width: 100%;
+
+            td {
+                &:first-child {
+                    text-align: left;
+                }
+
+                &:last-child {
+                    text-align: right;
+                }
+            }
+
+            .small {
+                font-size: 10px;
             }
         }
     }
 }
 
-.how-do-i-work-popup,
-.new-journey-confirmation-popup {
-    .inner {
-        background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
-        border-radius: $borderRadius;
+.close-button {
+    font-size: 24px;
+    float: right;
+    cursor: pointer;
+
+    &:after {
+        content: "";
+        display: table;
+        clear: both;
     }
 }
 

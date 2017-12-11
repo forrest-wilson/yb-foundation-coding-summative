@@ -79,7 +79,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("sectionOne");
+        showFormPage("#sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
@@ -167,26 +167,32 @@ $(document).ready(() => {
 
     // Shows a form page depending on what id is vehicleMatches to it
     function showFormPage(id) {
-        let elToShow = document.getElementById(id);
+        let elToShow = $(id);
 
-        elToShow.style.display = "block";
+        elToShow.css("display", "block");
 
         setTimeout(() => {
-            elToShow.style.opacity = 1.0;
-            elToShow.style.transform = "scale(1)";
+            elToShow.css({
+                "opacity": "1.0",
+                "transform": "scale(1)"
+            });
         }, 50);
     }
 
     // Shows the next page and hides the current page
     function showNextPage(idToShow, idToHide) {
-        let elToHide = document.getElementById(idToHide);
+        let elToHide = $(idToHide);
 
-        elToHide.style.transform = "scale(" + scaleFactor + ")";
-        elToHide.style.opacity = 0;
+        elToHide.css({
+            "transform": "scale(" + scaleFactor + ")",
+            "opacity": "0"
+        });
 
         setTimeout(() => {
-            elToHide.style.display = "none";
-            elToHide.style.transform = "scale(0)";
+            elToHide.css({
+                "display": "none",
+                "transform": "scale(0)"
+            });
         }, transitionTime);
 
         showFormPage(idToShow);
@@ -194,66 +200,70 @@ $(document).ready(() => {
 
     // Shows the previous page and hides the current page
     function showPreviousPage(idToShow, idToHide) {
-        let elToShow = document.getElementById(idToShow);
-        let elToHide = document.getElementById(idToHide);
+        let elToShow = $(idToShow);
+        let elToHide = $(idToHide);
 
-        elToHide.style.opacity = 0;
-        elToHide.style.transform = "scale(0)";
+        elToHide.css({
+            "opacity": "0",
+            "transform": "scale(0)"
+        });
 
         setTimeout(() => {
-            elToHide.style.display = "none";
+            elToHide.css("display", "none");
         }, transitionTime);
 
-        elToShow.style.transition = "0ms";
-        elToShow.style.transform = "scale(" + scaleFactor + ")";
+        elToShow.css({
+            "transition": "0ms",
+            "transform": "scale(" + scaleFactor + ")"
+        });
         
         setTimeout(() => {
-            elToShow.style.transition = transitionTime + "ms";
+            elToShow.css("transition", transitionTime + "ms");
             showFormPage(idToShow);
         });
     }
 
     // Returns the application to it's default state
-    function returnToDefaults() {
-        let allGeocoders = $(".mapboxgl-ctrl-geocoder");
-        let waypointInputs = $("#waypoints").children();
+    // function returnToDefaults() {
+    //     let allGeocoders = $(".mapboxgl-ctrl-geocoder");
+    //     let waypointInputs = $("#waypoints").children();
 
-        // Removes all map markers from the map
-        for (let i = 0; i < mapPoints.markers.length; i++) {
-            mapPoints.markers[i].remove();
-        }
+    //     // Removes all map markers from the map
+    //     for (let i = 0; i < mapPoints.markers.length; i++) {
+    //         mapPoints.markers[i].remove();
+    //     }
 
-        // Sets the value of the geocoder inputs to null
-        for (let j = 0; j < allGeocoders.length; j++) {
-            allGeocoders[j].children[1].value = null;
-        }
+    //     // Sets the value of the geocoder inputs to null
+    //     for (let j = 0; j < allGeocoders.length; j++) {
+    //         allGeocoders[j].children[1].value = null;
+    //     }
 
-        // Removes all but the first waypoint geocoder element from the DOM
-        // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
-        for (let k = 0; k < waypointInputs.length; k++) {
-            if (k !== 0) {
-                waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
-            }
-        }
+    //     // Removes all but the first waypoint geocoder element from the DOM
+    //     // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
+    //     for (let k = 0; k < waypointInputs.length; k++) {
+    //         if (k !== 0) {
+    //             waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
+    //         }
+    //     }
 
-        let vis = map.getLayoutProperty("route", "visibility");
+    //     let vis = map.getLayoutProperty("route", "visibility");
 
-        if (vis === "visible") {
-            map.setLayoutProperty("route", "visibility", "none");
-        }
+    //     if (vis === "visible") {
+    //         map.setLayoutProperty("route", "visibility", "none");
+    //     }
 
-        mapPoints = {
-            origin: null,
-            destination: null,
-            waypoints: [],
-            markers: []
-        };
+    //     mapPoints = {
+    //         origin: null,
+    //         destination: null,
+    //         waypoints: [],
+    //         markers: []
+    //     };
 
-        map.flyTo({
-            center: nzCenter,
-            zoom: 4.5
-        });
-    }
+    //     map.flyTo({
+    //         center: nzCenter,
+    //         zoom: 4.5
+    //     });
+    // }
 
     // Generic AJAX GET function
     function xhrGet(url, callback) {
@@ -523,7 +533,7 @@ $(document).ready(() => {
 
     $("#sectionOneButton").click((e) => {
         e.preventDefault();
-        showNextPage("sectionTwo", "sectionOne");
+        showNextPage("#sectionTwo", "#sectionOne");
         toggleBackgroundImage();
     });
 
@@ -533,7 +543,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         if (mapPoints.origin) {
-            showNextPage("sectionThree", "sectionTwo");
+            showNextPage("#sectionThree", "#sectionTwo");
         } else {
             $("#origin").tooltipster("open");
         }
@@ -541,7 +551,7 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonBack").click((e) => {
         e.preventDefault();
-        showPreviousPage("sectionOne", "sectionTwo");
+        showPreviousPage("#sectionOne", "#sectionTwo");
         toggleBackgroundImage();
     });
 
@@ -562,12 +572,12 @@ $(document).ready(() => {
             }
         }
 
-        showNextPage("sectionFour", "sectionThree");
+        showNextPage("#sectionFour", "#sectionThree");
     });
 
     $("#sectionThreeButtonBack").click((e) => {
         e.preventDefault();
-        showPreviousPage("sectionTwo", "sectionThree");
+        showPreviousPage("#sectionTwo", "#sectionThree");
     });
 
     $("#anotherStop").click((e) => {
@@ -596,7 +606,7 @@ $(document).ready(() => {
 
         if (mapPoints.destination) {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, () => {
-                showNextPage("sectionFive", "sectionFour");
+                showNextPage("#sectionFive", "#sectionFour");
 
                 let distance = getRouteDistance(routeInfo.data.routes[0].distance);
                 let hireDays = recommendedHireDays(distance[1]);
@@ -614,7 +624,7 @@ $(document).ready(() => {
 
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
-        showPreviousPage("sectionThree", "sectionFour");
+        showPreviousPage("#sectionThree", "#sectionFour");
     });
 
     // Section Five
@@ -652,13 +662,13 @@ $(document).ready(() => {
     $("#sectionFiveButtonNext").click((e) => {
         e.preventDefault();
         hireInfo.persons = $("#peopleCounterNumber").text();
-        showNextPage("sectionSix", "sectionFive");
+        showNextPage("#sectionSix", "#sectionFive");
         $("#peopleCounter").tooltipster("close");
     });
 
     $("#sectionFiveButtonBack").click((e) => {
         e.preventDefault();
-        showPreviousPage("sectionFour", "sectionFive");
+        showPreviousPage("#sectionFour", "#sectionFive");
     });
 
     // Section Six
@@ -741,13 +751,14 @@ $(document).ready(() => {
 
                         // Workaround for the request being too fast for the animation
                         setTimeout(() => {
-                            showNextPage("sectionSeven", "sectionSix");
+                            showNextPage("#sectionSeven", "#sectionSix");
                             $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
                             
                             // Slick rendering issue workaround
                             if (vehicleMatches.length === 1) {
                                 $(".slick-track").css("width", "auto");
                                 $(".vehicle-option").css("width", "auto");
+                                $(".vehicle-option").css("float", "none");
                             }
                         }, transitionTime);
 
@@ -764,7 +775,7 @@ $(document).ready(() => {
     $("#sectionSixButtonBack").click((e) => {
         e.preventDefault();
 
-        showPreviousPage("sectionFive", "sectionSix");
+        showPreviousPage("#sectionFive", "#sectionSix");
     });
 
     // Section Seven
@@ -777,7 +788,7 @@ $(document).ready(() => {
             $(".vehicle-options").slick("slickRemove", 0);
         }
 
-        showPreviousPage("sectionSix", "sectionSeven");
+        showPreviousPage("#sectionSix", "#sectionSeven");
     });
 
     // Modal Overlay Buttons
@@ -828,20 +839,20 @@ $(document).ready(() => {
 
     $("#editJourney").click((e) => {
         e.preventDefault();
-        showPreviousPage("sectionTwo", "sectionFive");
+        showPreviousPage("#sectionTwo", "#sectionFive");
     });
 
     // New Journey Confirmation Popup
 
-    $("#confirmNewJourney").click((e) => {
-        toggleNewJourneyConfirmation();
-        returnToDefaults();
-        showPreviousPage("sectionTwo", "sectionFive");
-    });
+    // $("#confirmNewJourney").click((e) => {
+    //     toggleNewJourneyConfirmation();
+    //     returnToDefaults();
+    //     showPreviousPage("sectionTwo", "sectionFive");
+    // });
 
-    $("#declineNewJourney").click((e) => {
-        toggleNewJourneyConfirmation();
-    });
+    // $("#declineNewJourney").click((e) => {
+    //     toggleNewJourneyConfirmation();
+    // });
 
     //
     // AJAX Loading GIF Handler

@@ -70,7 +70,11 @@ $(document).ready(() => {
     // JSON from vehicleInfo.json
     let vehicleInfo = null;
 
+    // HTML Template response
     let htmlVehicleTemplate = null;
+
+    // Holds the timeout for the counter buttons
+    let counterTimeout;
 
     ///////////////////////////////
     //// Function Declarations ////
@@ -79,7 +83,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("#sectionOne");
+        showFormPage("#sectionFive");
 
         // Calling the initial geocoder setup
         addGeocoder("#origin", map, "Please enter a start point", "originGeocoder");
@@ -285,13 +289,13 @@ $(document).ready(() => {
     }
 
     // Converts the route time from seconds to hours/minutes
-    function getRouteDuration(seconds) {
-        let totalTime = seconds / 3600;
-        let hours = Math.floor(totalTime);
-        let minutes = Math.floor((totalTime - hours) * 60);
+    // function getRouteDuration(seconds) {
+    //     let totalTime = seconds / 3600;
+    //     let hours = Math.floor(totalTime);
+    //     let minutes = Math.floor((totalTime - hours) * 60);
 
-        return hours + " hours & " + minutes + " minutes";
-    }
+    //     return hours + " hours & " + minutes + " minutes";
+    // }
 
     // Adds a geocode control and appends to the document
     function addGeocoder(id, map, placeholder, geocoderId) {
@@ -421,7 +425,7 @@ $(document).ready(() => {
             });
 
             // Fits the map to the bounds of the specific route retrieved
-            let pathCoordinates = data.routes[0].geometry.coordinates;
+            let pathCoordinates = route.coordinates;
 
             let bounds = pathCoordinates.reduce((bounds, coord) => {
                 return bounds.extend(coord);
@@ -442,6 +446,39 @@ $(document).ready(() => {
             // Callback for showing the next page once the ajax request has finished
             if (typeof callback !== "undefined") callback();
         }); 
+    }
+
+    // This function will increase or decrease the counter
+    function increaseOrDecreaseCounter(increaseOrDecrease) {
+        let counter = parseInt($("#peopleCounterNumber").text());
+
+        clearTimeout(counterTimeout);
+
+        $("#peopleCounter").tooltipster("close");
+
+        if (counter <= 1 && increaseOrDecrease === "decrease") {
+            $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
+            $("#peopleCounter").tooltipster("open");
+        } else if (counter >= 6 && increaseOrDecrease === "increase") {
+            $("#peopleCounter").tooltipster("content", "You can't have more than 6 people");
+            $("#peopleCounter").tooltipster("open");
+        } else {
+            switch(increaseOrDecrease) {
+                case "increase":
+                    $("#peopleCounterNumber").text(counter + 1);
+                    break;
+                case "decrease":
+                    $("#peopleCounterNumber").text(counter - 1);
+                    break;
+                default:
+                    console.log("Not a valid case");
+                    break;
+            }
+        }
+
+        counterTimeout = setTimeout(() => {
+            $("#peopleCounter").tooltipster("close");
+        }, 2500);
     }
 
     // Calculate the recommended days for hire
@@ -560,7 +597,7 @@ $(document).ready(() => {
     $("#sectionThreeButtonNext").click((e) => {
         e.preventDefault();
 
-        let waypointInputs = document.getElementById("waypoints").children;
+        let waypointInputs = $("#waypoints")[0].children;
         mapPoints.waypoints = []; // Makes sure the array is empty
 
         // Checks the input value of each "waypointInputs" field
@@ -583,7 +620,7 @@ $(document).ready(() => {
     $("#anotherStop").click((e) => {
         e.preventDefault();
 
-        let allInputs = document.getElementById("waypoints").children;
+        let allInputs = $("#waypoints")[0].children;
         let valueArray = [];
 
         // Loops through each waypoint input and pushes the input value to the valueArray
@@ -618,8 +655,6 @@ $(document).ready(() => {
         } else {
             $("#destination").tooltipster("open");
         }
-
-        console.log(mapPoints);
     });
 
     $("#sectionFourButtonBack").click((e) => {
@@ -629,34 +664,16 @@ $(document).ready(() => {
 
     // Section Five
 
+    // Decrease counter click handler
     $("#decreasePeopleCounter").click((e) => {
         e.preventDefault();
-        $("#peopleCounter").tooltipster("close");
-        if (parseInt($("#peopleCounterNumber").text()) <= 1) {
-            $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
-            $("#peopleCounter").tooltipster("open");
-            setTimeout(() => {
-                $("#peopleCounter").tooltipster("close");
-            }, 2500);
-        } else {
-            let curText = $("#peopleCounterNumber").text();
-            $("#peopleCounterNumber").text(parseInt(curText) - 1);
-        }
+        increaseOrDecreaseCounter("decrease");
     });
 
+    // Increase counter click handler
     $("#increasePeopleCounter").click((e) => {
         e.preventDefault();
-        $("#peopleCounter").tooltipster("close");
-        if (parseInt($("#peopleCounterNumber").text()) >= 6) {
-            $("#peopleCounter").tooltipster("content", "You can't have more than 6 people");
-            $("#peopleCounter").tooltipster("open");
-            setTimeout(() => {
-                $("#peopleCounter").tooltipster("close");
-            }, 2500);
-        } else {
-            let curText = $("#peopleCounterNumber").text();
-            $("#peopleCounterNumber").text(parseInt(curText) + 1);
-        }
+        increaseOrDecreaseCounter("increase");
     });
 
     $("#sectionFiveButtonNext").click((e) => {
@@ -681,7 +698,6 @@ $(document).ready(() => {
 
     $("[data-toggle=\"returnDate\"]").on("pick.datepicker", (e) => {
         hireInfo.days.endDay = Date.parse(e.date);
-        console.log(hireInfo);
         $("[data-toggle=\"pickupDate\"]").datepicker("setEndDate", new Date(hireInfo.days.endDay));
     });
 
@@ -694,6 +710,7 @@ $(document).ready(() => {
     $("#sectionSixButtonNext").click((e) => {
         e.preventDefault();
 
+        // Checks to see whether there are valid start and end days
         if (hireInfo.days.startDay && hireInfo.days.endDay) {
             $("#datePickers").tooltipster("close");
 

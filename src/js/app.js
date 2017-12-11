@@ -319,7 +319,7 @@ $(document).ready(() => {
         // If a geocoderId has been added, run this code
         if (geocoderId) {
             // Returns an array of the elements children
-            let geocoderEls = $(id)[0].children;
+            let geocoderEls = $(id).children();
             let elCount = geocoderEls.length;
 
             geocoderEls[elCount - 1].setAttribute("id", geocoderId);
@@ -329,7 +329,7 @@ $(document).ready(() => {
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
         // Has to be outside of the "result" event listener
-        let array = $("#waypoints")[0].children;
+        let array = $("#waypoints").children();
         let arrayIndex = null;
 
         for (let i = 0; i < array.length; i++) {
@@ -597,7 +597,7 @@ $(document).ready(() => {
     $("#sectionThreeButtonNext").click((e) => {
         e.preventDefault();
 
-        let waypointInputs = $("#waypoints")[0].children;
+        let waypointInputs = $("#waypoints").children();
         mapPoints.waypoints = []; // Makes sure the array is empty
 
         // Checks the input value of each "waypointInputs" field
@@ -623,7 +623,7 @@ $(document).ready(() => {
     $("#anotherStop").click((e) => {
         e.preventDefault();
 
-        let allInputs = $("#waypoints")[0].children;
+        let allInputs = $("#waypoints").children();
         let valueArray = [];
 
         closeAllTooltips();

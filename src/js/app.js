@@ -82,9 +82,9 @@ $(document).ready(() => {
         showFormPage("#sectionOne");
 
         // Calling the initial geocoder setup
-        addGeocoder("origin", map, "Please enter a start point", "originGeocoder");
-        addGeocoder("waypoints", map, "Please enter a stop");
-        addGeocoder("destination", map, "Please enter your destination", "destinationGeocoder");
+        addGeocoder("#origin", map, "Please enter a start point", "originGeocoder");
+        addGeocoder("#waypoints", map, "Please enter a stop");
+        addGeocoder("#destination", map, "Please enter your destination", "destinationGeocoder");
 
         // Initialize event handlers that rely on geocoders being in the DOM
         $("#originGeocoder .geocoder-pin-right .geocoder-icon-close").click((e) => {
@@ -309,12 +309,12 @@ $(document).ready(() => {
         map.addControl(geocoder);
 
         // Copys the geocoder to custom DOM element
-        document.getElementById(id).appendChild(geocoder.onAdd(map));
+        $(id)[0].appendChild(geocoder.onAdd(map));
 
         // If a geocoderId has been added, run this code
         if (geocoderId) {
             // Returns an array of the elements children
-            let geocoderEls = document.getElementById(id).children;
+            let geocoderEls = $(id)[0].children;
             let elCount = geocoderEls.length;
 
             geocoderEls[elCount - 1].setAttribute("id", geocoderId);
@@ -324,7 +324,7 @@ $(document).ready(() => {
         ctrlEls[0].removeChild(ctrlEls[0].children[0]);
 
         // Has to be outside of the "result" event listener
-        let array = document.getElementById("waypoints").children;
+        let array = $("#waypoints")[0].children;
         let arrayIndex = null;
 
         for (let i = 0; i < array.length; i++) {
@@ -340,13 +340,13 @@ $(document).ready(() => {
             $("#destination").tooltipster("close");
             $("#waypoints").tooltipster("close");
             switch (id) {
-                case "origin":
+                case "#origin":
                     mapPoints.origin = e;
                     break;
-                case "destination":
+                case "#destination":
                     mapPoints.destination = e;
                     break;
-                case "waypoints":
+                case "#waypoints":
                     if (waypoints === []) {
                         waypoints.push(e);
                     } else {
@@ -593,7 +593,7 @@ $(document).ready(() => {
 
         // If an input is empty, don't add another input field to the DOM
         if (valueArray.every((val) => { return val !== ""; })) {
-            addGeocoder("waypoints", map, "Please enter a stop");
+            addGeocoder("#waypoints", map, "Please enter a stop");
         } else {
             $("#waypoints").tooltipster("open");
         }

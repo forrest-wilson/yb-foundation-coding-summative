@@ -37,7 +37,6 @@ $(document).ready(() => {
     });
 
     // Mutable variables
-    let saveJourneyConfirmationShowing = false;
     let waypoints = [];
 
     // Map properties

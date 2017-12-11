@@ -83,7 +83,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("#sectionFive");
+        showFormPage("#sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("#origin", map, "Please enter a start point", "originGeocoder");
@@ -133,17 +133,18 @@ $(document).ready(() => {
         }
     }
 
-    // function toggleNewJourneyConfirmation() {
-    //     if (newJourneyConfirmationShowing) {
-    //         $("#mask").fadeOut(transitionTime);
-    //         $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
-    //         newJourneyConfirmationShowing = false;
-    //     } else {
-    //         $("#mask").fadeIn(transitionTime);
-    //         $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
-    //         newJourneyConfirmationShowing = true;
-    //     }
-    // }
+    // Confirmation popup box if the user decides to start a new journey
+    function toggleNewJourneyConfirmation() {
+        if (newJourneyConfirmationShowing) {
+            $("#mask").fadeOut(transitionTime);
+            $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
+            newJourneyConfirmationShowing = false;
+        } else {
+            $("#mask").fadeIn(transitionTime);
+            $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
+            newJourneyConfirmationShowing = true;
+        }
+    }
 
     // Toggles the background image based on the backgroundImageIsShowing boolean
     function toggleBackgroundImage() {
@@ -228,46 +229,55 @@ $(document).ready(() => {
     }
 
     // Returns the application to it's default state
-    // function returnToDefaults() {
-    //     let allGeocoders = $(".mapboxgl-ctrl-geocoder");
-    //     let waypointInputs = $("#waypoints").children();
+    function returnToDefaults() {
+        let allGeocoders = $(".mapboxgl-ctrl-geocoder");
+        let waypointInputs = $("#waypoints").children();
 
-    //     // Removes all map markers from the map
-    //     for (let i = 0; i < mapPoints.markers.length; i++) {
-    //         mapPoints.markers[i].remove();
-    //     }
+        // Removes all map markers from the map
+        for (let i = 0; i < mapPoints.markers.length; i++) {
+            mapPoints.markers[i].remove();
+        }
 
-    //     // Sets the value of the geocoder inputs to null
-    //     for (let j = 0; j < allGeocoders.length; j++) {
-    //         allGeocoders[j].children[1].value = null;
-    //     }
+        // Sets the value of the geocoder inputs to null
+        for (let j = 0; j < allGeocoders.length; j++) {
+            allGeocoders[j].children[1].value = null;
+        }
 
-    //     // Removes all but the first waypoint geocoder element from the DOM
-    //     // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
-    //     for (let k = 0; k < waypointInputs.length; k++) {
-    //         if (k !== 0) {
-    //             waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
-    //         }
-    //     }
+        // Removes all but the first waypoint geocoder element from the DOM
+        // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
+        for (let k = 0; k < waypointInputs.length; k++) {
+            if (k !== 0) {
+                waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
+            }
+        }
 
-    //     let vis = map.getLayoutProperty("route", "visibility");
+        let vis = map.getLayoutProperty("route", "visibility");
 
-    //     if (vis === "visible") {
-    //         map.setLayoutProperty("route", "visibility", "none");
-    //     }
+        if (vis === "visible") {
+            map.setLayoutProperty("route", "visibility", "none");
+        }
 
-    //     mapPoints = {
-    //         origin: null,
-    //         destination: null,
-    //         waypoints: [],
-    //         markers: []
-    //     };
+        mapPoints = {
+            origin: null,
+            destination: null,
+            waypoints: [],
+            markers: []
+        };
 
-    //     map.flyTo({
-    //         center: nzCenter,
-    //         zoom: 4.5
-    //     });
-    // }
+        map.flyTo({
+            center: nzCenter,
+            zoom: 4.5
+        });
+    }
+
+    // Closes all tooltips
+    function closeAllTooltips() {
+        $("#origin").tooltipster("close");
+        $("#destination").tooltipster("close");
+        $("#waypoints").tooltipster("close");
+        $("#peopleCounter").tooltipster("close");
+        $("#datePickers").tooltipster("close");
+    }
 
     // Generic AJAX GET function
     function xhrGet(url, callback) {
@@ -287,15 +297,6 @@ $(document).ready(() => {
         // Returns an array. Index 0 is a string and index 1 is a number
         return [roundedNumber + "km", roundedNumber];
     }
-
-    // Converts the route time from seconds to hours/minutes
-    // function getRouteDuration(seconds) {
-    //     let totalTime = seconds / 3600;
-    //     let hours = Math.floor(totalTime);
-    //     let minutes = Math.floor((totalTime - hours) * 60);
-
-    //     return hours + " hours & " + minutes + " minutes";
-    // }
 
     // Adds a geocode control and appends to the document
     function addGeocoder(id, map, placeholder, geocoderId) {
@@ -340,9 +341,7 @@ $(document).ready(() => {
         }
 
         geocoder.on("result", (e) => {
-            $("#origin").tooltipster("close");
-            $("#destination").tooltipster("close");
-            $("#waypoints").tooltipster("close");
+            closeAllTooltips();
             switch (id) {
                 case "#origin":
                     mapPoints.origin = e;
@@ -454,7 +453,7 @@ $(document).ready(() => {
 
         clearTimeout(counterTimeout);
 
-        $("#peopleCounter").tooltipster("close");
+        closeAllTooltips();
 
         if (counter <= 1 && increaseOrDecrease === "decrease") {
             $("#peopleCounter").tooltipster("content", "You can't have less than 1 person");
@@ -477,7 +476,7 @@ $(document).ready(() => {
         }
 
         counterTimeout = setTimeout(() => {
-            $("#peopleCounter").tooltipster("close");
+            closeAllTooltips();
         }, 2500);
     }
 
@@ -508,7 +507,7 @@ $(document).ready(() => {
             $("#datePickers").tooltipster("content", "You can't have a hire for less than 1 day");
             $("#datePickers").tooltipster("open");
         } else {
-            $("#datePickers").tooltipster("close");
+            closeAllTooltips();
             hireInfo.days.totalDays = days;
             callback();
         }
@@ -588,8 +587,9 @@ $(document).ready(() => {
 
     $("#sectionTwoButtonBack").click((e) => {
         e.preventDefault();
-        showPreviousPage("#sectionOne", "#sectionTwo");
+        closeAllTooltips();
         toggleBackgroundImage();
+        showPreviousPage("#sectionOne", "#sectionTwo");
     });
 
     // Section Three
@@ -609,11 +609,14 @@ $(document).ready(() => {
             }
         }
 
+        closeAllTooltips();
+
         showNextPage("#sectionFour", "#sectionThree");
     });
 
     $("#sectionThreeButtonBack").click((e) => {
         e.preventDefault();
+        closeAllTooltips();
         showPreviousPage("#sectionTwo", "#sectionThree");
     });
 
@@ -622,6 +625,8 @@ $(document).ready(() => {
 
         let allInputs = $("#waypoints")[0].children;
         let valueArray = [];
+
+        closeAllTooltips();
 
         // Loops through each waypoint input and pushes the input value to the valueArray
         for (let i = 0; i < allInputs.length; i++) {
@@ -633,6 +638,9 @@ $(document).ready(() => {
             addGeocoder("#waypoints", map, "Please enter a stop");
         } else {
             $("#waypoints").tooltipster("open");
+            setTimeout(() => {
+                closeAllTooltips();
+            }, 2500);
         }
     });
 
@@ -659,6 +667,7 @@ $(document).ready(() => {
 
     $("#sectionFourButtonBack").click((e) => {
         e.preventDefault();
+        closeAllTooltips();
         showPreviousPage("#sectionThree", "#sectionFour");
     });
 
@@ -679,12 +688,13 @@ $(document).ready(() => {
     $("#sectionFiveButtonNext").click((e) => {
         e.preventDefault();
         hireInfo.persons = $("#peopleCounterNumber").text();
+        closeAllTooltips();
         showNextPage("#sectionSix", "#sectionFive");
-        $("#peopleCounter").tooltipster("close");
     });
 
     $("#sectionFiveButtonBack").click((e) => {
         e.preventDefault();
+        closeAllTooltips();
         showPreviousPage("#sectionFour", "#sectionFive");
     });
 
@@ -712,7 +722,7 @@ $(document).ready(() => {
 
         // Checks to see whether there are valid start and end days
         if (hireInfo.days.startDay && hireInfo.days.endDay) {
-            $("#datePickers").tooltipster("close");
+            closeAllTooltips();
 
             calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
                 // Gets the HTML template
@@ -791,7 +801,7 @@ $(document).ready(() => {
 
     $("#sectionSixButtonBack").click((e) => {
         e.preventDefault();
-
+        closeAllTooltips();
         showPreviousPage("#sectionFive", "#sectionSix");
     });
 
@@ -856,20 +866,20 @@ $(document).ready(() => {
 
     $("#editJourney").click((e) => {
         e.preventDefault();
-        showPreviousPage("#sectionTwo", "#sectionFive");
+        showPreviousPage("#sectionTwo", "#sectionSeven");
     });
 
     // New Journey Confirmation Popup
 
-    // $("#confirmNewJourney").click((e) => {
-    //     toggleNewJourneyConfirmation();
-    //     returnToDefaults();
-    //     showPreviousPage("sectionTwo", "sectionFive");
-    // });
+    $("#confirmNewJourney").click((e) => {
+        toggleNewJourneyConfirmation();
+        returnToDefaults();
+        showPreviousPage("#sectionTwo", "#sectionSeven");
+    });
 
-    // $("#declineNewJourney").click((e) => {
-    //     toggleNewJourneyConfirmation();
-    // });
+    $("#declineNewJourney").click((e) => {
+        toggleNewJourneyConfirmation();
+    });
 
     //
     // AJAX Loading GIF Handler

@@ -68,8 +68,52 @@
 }
 
 @media screen and (min-height: 800px) {
+    .section {
+        .inner {
+            .content {
+                padding-top: 60px;
+            }
+        }
+    }
+
+    .section-one {
+        .inner {
+            .content {
+                position: relative;
+
+                .content-wrapper {
+                    @include positioning(fixed, 50%, $l: 50%);
+                    transform: translate(-50%, -50%);
+                    width: 90%;
+                }
+            }
+        }
+
+        .section-one-button {
+            bottom: 30%!important;
+            width: 300px!important;
+            margin: 0 auto;
+        }
+    }
+
     .more-vehicle-info-popup {
         margin: auto!important;
+    }
+}
+
+@media screen and (min-height: 900px) {
+    .section-seven {
+        .inner {
+            .content {
+                h2 {
+                    font-size: 3em;
+                }
+
+                p {
+                    font-size: 1.3em;
+                }
+            }
+        }
     }
 }
 

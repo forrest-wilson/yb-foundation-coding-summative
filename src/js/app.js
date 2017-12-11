@@ -133,8 +133,8 @@ $(document).ready(() => {
     }
 
     // Toggles the background image based on the backgroundImageIsShowing boolean
-    function toggleBackgroundImage(showing) {
-        switch (showing) {
+    function toggleBackgroundImage(state) {
+        switch (state) {
             case "show":
                 $("#backgroundImage").fadeIn(transitionTime);
                 break;

@@ -83,7 +83,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("#sectionOne");
+        showFormPage("#sectionFive");
 
         // Calling the initial geocoder setup
         addGeocoder("#origin", map, "Please enter a start point", "originGeocoder");

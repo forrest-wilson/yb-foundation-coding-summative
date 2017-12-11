@@ -40,7 +40,8 @@ $(document).ready(() => {
     let howDoIWorkOverlayShowing = false;
     let backgroundImageIsShowing = true;
     let vehicleOverlayShowing = false;
-    let newJourneyConfirmationShowing = false;
+    let saveJourneyConfirmationShowing = false;
+    let loadJourneyPopupIsShowing = false;
     let waypoints = [];
 
     // Map properties
@@ -83,7 +84,7 @@ $(document).ready(() => {
     // Functions to be called on page load are in this IIFE
     function init() {
         // Present the initial page
-        showFormPage("#sectionFive");
+        showFormPage("#sectionOne");
 
         // Calling the initial geocoder setup
         addGeocoder("#origin", map, "Please enter a start point", "originGeocoder");
@@ -133,16 +134,16 @@ $(document).ready(() => {
         }
     }
 
-    // Confirmation popup box if the user decides to start a new journey
-    function toggleNewJourneyConfirmation() {
-        if (newJourneyConfirmationShowing) {
+    // Toggles the load journey popup
+    function toggleLoadJourneyPopup() {
+        if (loadJourneyPopupIsShowing) {
             $("#mask").fadeOut(transitionTime);
-            $("#newJourneyConfirmationPopup").fadeOut(transitionTime);
-            newJourneyConfirmationShowing = false;
+            $("#loadJourneyPopup").fadeOut(transitionTime);
+            loadJourneyPopupIsShowing = false;
         } else {
             $("#mask").fadeIn(transitionTime);
-            $("#newJourneyConfirmationPopup").fadeIn(transitionTime);
-            newJourneyConfirmationShowing = true;
+            $("#loadJourneyPopup").fadeIn(transitionTime);
+            loadJourneyPopupIsShowing = true;
         }
     }
 
@@ -167,6 +168,19 @@ $(document).ready(() => {
             $("#moreVehicleInfoPopup").fadeIn(transitionTime);
             $("#mask").fadeIn(transitionTime);
             vehicleOverlayShowing = true;
+        }
+    }
+
+    // Toggles the save confirmation window for saving a journey
+    function toggleSaveJourneyConfirmation() {
+        if (saveJourneyConfirmationShowing) {
+            $("#saveJourneyNamePopup").fadeOut(transitionTime);
+            $("#mask").fadeOut(transitionTime);
+            saveJourneyConfirmationShowing = false;
+        } else {
+            $("#saveJourneyNamePopup").fadeIn(transitionTime);
+            $("#mask").fadeIn(transitionTime);
+            saveJourneyConfirmationShowing = true;
         }
     }
 
@@ -225,48 +239,6 @@ $(document).ready(() => {
         setTimeout(() => {
             elToShow.css("transition", transitionTime + "ms");
             showFormPage(idToShow);
-        });
-    }
-
-    // Returns the application to it's default state
-    function returnToDefaults() {
-        let allGeocoders = $(".mapboxgl-ctrl-geocoder");
-        let waypointInputs = $("#waypoints").children();
-
-        // Removes all map markers from the map
-        for (let i = 0; i < mapPoints.markers.length; i++) {
-            mapPoints.markers[i].remove();
-        }
-
-        // Sets the value of the geocoder inputs to null
-        for (let j = 0; j < allGeocoders.length; j++) {
-            allGeocoders[j].children[1].value = null;
-        }
-
-        // Removes all but the first waypoint geocoder element from the DOM
-        // NOTE: May cause a memory leak as the geocoder isn't being de-initialized
-        for (let k = 0; k < waypointInputs.length; k++) {
-            if (k !== 0) {
-                waypointInputs[k].parentElement.removeChild(waypointInputs[k]);
-            }
-        }
-
-        let vis = map.getLayoutProperty("route", "visibility");
-
-        if (vis === "visible") {
-            map.setLayoutProperty("route", "visibility", "none");
-        }
-
-        mapPoints = {
-            origin: null,
-            destination: null,
-            waypoints: [],
-            markers: []
-        };
-
-        map.flyTo({
-            center: nzCenter,
-            zoom: 4.5
         });
     }
 
@@ -413,7 +385,7 @@ $(document).ready(() => {
             for (let i = 0; i < mapPoints.markers.length; i++) {
                 mapPoints.markers[i].remove();
             }
-
+            
             // Adds markers to the map
             data.waypoints.forEach((marker, i) => {
                 let newMarker = document.createElement("div");
@@ -543,6 +515,146 @@ $(document).ready(() => {
         if (typeof callback !== "undefined") callback();
     }
 
+    // Populates the HTML template
+    function populateHtmlTemplate() {
+        // Checks to see whether there are valid start and end days
+        if (hireInfo.days.startDay && hireInfo.days.endDay) {
+            closeAllTooltips();
+
+            calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
+                // Gets the HTML template
+                xhrGet("./ajax/vehicle_template.html", (templateData) => {
+                    htmlVehicleTemplate = templateData
+
+                    xhrGet("./json/vehicleInfo.json", (jsonData) => {
+                        vehicleInfo = jsonData;
+
+                        let allVehicles = vehicleInfo.vehicles; // array
+                        let daysMatch = [];
+                        let personsMatch = [];
+                        let vehicleMatches = [];
+
+                        // Adds objects that match the conditions to seperate arrays
+                        for (let i in allVehicles) {
+                            if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
+                                daysMatch.push(allVehicles[i]);
+                            } else {
+                                daysMatch.push(false);
+                            }
+
+                            if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
+                                personsMatch.push(allVehicles[i]);
+                            } else {
+                                personsMatch.push(false);
+                            }
+                        }
+
+                        // Attempts to find matches and appends any that do match
+                        // to an array that holds objects that pass both conditions
+                        for (let i in allVehicles) {
+                            if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
+                                vehicleMatches.push(allVehicles[i]);
+                            }
+                        }
+
+                        // Sets the attributes of the vehicleMatches to
+                        // properties fetched from the vehicleInfo.json file
+                        for (let i in vehicleMatches) {
+                            let template = $.parseHTML(htmlVehicleTemplate)[0];
+                            let settableEls = template.children[0].children[0];
+
+                            template.setAttribute("id", vehicleMatches[i].vehicle);
+
+                            settableEls.children[0].textContent = vehicleMatches[i].name;
+                            settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
+                            settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
+                            settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
+
+                            $(".vehicle-options").slick("slickAdd", template);
+                        }
+
+                        // Workaround for the request being too fast for the animation
+                        setTimeout(() => {
+                            showNextPage("#sectionSeven", "#sectionSix");
+                            $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
+                            
+                            // Slick rendering issue workaround
+                            if (vehicleMatches.length === 1) {
+                                $(".slick-track").css("width", "auto");
+                                $(".vehicle-option").css("width", "auto");
+                                $(".vehicle-option").css("float", "none");
+                            }
+                        }, transitionTime);
+
+                        $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
+                    });
+                });
+            });
+
+        } else {
+            $("#datePickers").tooltipster("open");
+        }
+    }
+
+    // Saves the current journey to the browsers localstorage
+    function saveJourney(customName, callback) {
+        let master = {};
+
+        master.mapPoints = {};
+
+        master.mapPoints.destination = mapPoints.destination;
+        master.mapPoints.origin = mapPoints.origin;
+        master.mapPoints.waypoints = mapPoints.waypoints;
+        master.mapPoints.markers = [];
+
+        master.hireInfo = hireInfo;
+        master.routeInfo = routeInfo;
+
+        console.log("Master", master);
+
+        if (localStorage.getItem(customName)) {
+            console.log("This journey already exists. Please try a different name");
+        } else {
+            localStorage.setItem(customName, JSON.stringify(master));
+            if (typeof callback !== "undefined") callback();
+        }
+    }
+
+    // Loads a journey from localStorage
+    function showJourneys() {
+        $("#savedTrips").empty(); // Makes sure the UL is empty before appending any more
+        for (let i = 0; i < localStorage.length; i++) {
+            let button = document.createElement("button");
+            button.className = "btn btn-style-dark";
+            button.setAttribute("id", "loadJourney" + i);
+            button.textContent = "Load " + localStorage.key(i);
+
+            // Adds an event listener for each loadJourney ID
+            $(document).on("click", "#loadJourney" + i, (e) => {
+                e.preventDefault();
+
+                let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(i)));
+                console.log(savedTrip);
+
+                mapPoints = savedTrip.mapPoints;
+                hireInfo = savedTrip.hireInfo;
+                routeInfo = savedTrip.routeInfo;
+
+                $("#loadJourneyPopup").fadeOut(transitionTime);
+
+                getRoute(savedTrip.mapPoints.origin.result.geometry.coordinates, savedTrip.mapPoints.destination.result.geometry.coordinates, savedTrip.mapPoints.waypoints, () => {
+                    toggleBackgroundImage();
+
+                    populateHtmlTemplate();
+
+                    showNextPage("#sectionSeven", "#sectionOne");
+                });
+            });
+
+            $("#savedTrips").append(button);
+        }
+    }
+
     ////////////////////////
     //// Event Handlers ////
     ////////////////////////
@@ -571,6 +683,17 @@ $(document).ready(() => {
         e.preventDefault();
         showNextPage("#sectionTwo", "#sectionOne");
         toggleBackgroundImage();
+    });
+
+    $("#loadJourney").click((e) => {
+        e.preventDefault();
+        showJourneys();
+        toggleLoadJourneyPopup();
+    });
+
+    $("#loadJourneyPopupClose").click((e) => {
+        e.preventDefault();
+        toggleLoadJourneyPopup();
     });
 
     // Section Two
@@ -719,84 +842,7 @@ $(document).ready(() => {
 
     $("#sectionSixButtonNext").click((e) => {
         e.preventDefault();
-
-        // Checks to see whether there are valid start and end days
-        if (hireInfo.days.startDay && hireInfo.days.endDay) {
-            closeAllTooltips();
-
-            calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
-                // Gets the HTML template
-                xhrGet("./ajax/vehicle_template.html", (templateData) => {
-                    htmlVehicleTemplate = templateData
-
-                    xhrGet("./json/vehicleInfo.json", (jsonData) => {
-                        vehicleInfo = jsonData;
-
-                        let allVehicles = vehicleInfo.vehicles; // array
-                        let daysMatch = [];
-                        let personsMatch = [];
-                        let vehicleMatches = [];
-
-                        // Adds objects that match the conditions to seperate arrays
-                        for (let i in allVehicles) {
-                            if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
-                                daysMatch.push(allVehicles[i]);
-                            } else {
-                                daysMatch.push(false);
-                            }
-
-                            if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
-                                personsMatch.push(allVehicles[i]);
-                            } else {
-                                personsMatch.push(false);
-                            }
-                        }
-
-                        // Attempts to find matches and appends any that do match
-                        // to an array that holds objects that pass both conditions
-                        for (let i in allVehicles) {
-                            if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
-                                vehicleMatches.push(allVehicles[i]);
-                            }
-                        }
-
-                        // Sets the attributes of the vehicleMatches to
-                        // properties fetched from the vehicleInfo.json file
-                        for (let i in vehicleMatches) {
-                            let template = $.parseHTML(htmlVehicleTemplate)[0];
-                            let settableEls = template.children[0].children[0];
-
-                            template.setAttribute("id", vehicleMatches[i].vehicle);
-
-                            settableEls.children[0].textContent = vehicleMatches[i].name;
-                            settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
-                            settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
-                            settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
-
-                            $(".vehicle-options").slick("slickAdd", template);
-                        }
-
-                        // Workaround for the request being too fast for the animation
-                        setTimeout(() => {
-                            showNextPage("#sectionSeven", "#sectionSix");
-                            $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
-                            
-                            // Slick rendering issue workaround
-                            if (vehicleMatches.length === 1) {
-                                $(".slick-track").css("width", "auto");
-                                $(".vehicle-option").css("width", "auto");
-                                $(".vehicle-option").css("float", "none");
-                            }
-                        }, transitionTime);
-
-                        $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
-                    });
-                });
-            });
-
-        } else {
-            $("#datePickers").tooltipster("open");
-        }
+        populateHtmlTemplate();
     });
 
     $("#sectionSixButtonBack").click((e) => {
@@ -807,19 +853,7 @@ $(document).ready(() => {
 
     // Section Seven
 
-    $("#sectionSevenButtonBack").click((e) => {
-        e.preventDefault();
-
-        // Removes all slides from slick
-        for (let i in $(".vehicle-option")) {
-            $(".vehicle-options").slick("slickRemove", 0);
-        }
-
-        showPreviousPage("#sectionSix", "#sectionSeven");
-    });
-
     // Modal Overlay Buttons
-
     $(document).on("click", "#motorbikeMoreInfo", (e) => {
         e.preventDefault();
 
@@ -859,26 +893,28 @@ $(document).ready(() => {
 
     // Journey Editing
 
-    $("#newJourney").click((e) => {
-        e.preventDefault();
-        toggleNewJourneyConfirmation();
-    });
-
     $("#editJourney").click((e) => {
         e.preventDefault();
+        // Removes all slides from slick
+        for (let i in $(".vehicle-option")) {
+            $(".vehicle-options").slick("slickRemove", 0);
+        }
         showPreviousPage("#sectionTwo", "#sectionSeven");
     });
 
-    // New Journey Confirmation Popup
-
-    $("#confirmNewJourney").click((e) => {
-        toggleNewJourneyConfirmation();
-        returnToDefaults();
-        showPreviousPage("#sectionTwo", "#sectionSeven");
+    $("#saveJourney").click((e) => {
+        e.preventDefault();
+        toggleSaveJourneyConfirmation();
     });
 
-    $("#declineNewJourney").click((e) => {
-        toggleNewJourneyConfirmation();
+    $("#declineSave").click((e) => {
+        e.preventDefault();
+        toggleSaveJourneyConfirmation();
+    });
+
+    $("#confirmSave").click((e) => {
+        e.preventDefault();
+        saveJourney($("#journeyName").val());
     });
 
     //

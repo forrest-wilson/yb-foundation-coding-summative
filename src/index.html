@@ -52,7 +52,7 @@
                 </div>
 
                 <button id="sectionOneButton" class="btn btn-style-dark section-one-button">Get Started!</button>
-                <button id="sectionOneLoadButton" class="btn btn-style-dark load-button">Load a Journey</button>
+                <button id="loadJourney" class="btn btn-style-dark load-button">Load a Journey</button>
             </div>
         </section>
 
@@ -133,11 +133,10 @@
                         <!-- Not an actual geocoder. Just using the styling -->
                         <div id="datePickers" class="tooltip mapboxgl-ctrl-geocoder mapboxgl-ctrl date-pickers" title="Please select a pickup and return date">
                             
-                            <input type="text" placeholder="Please select a pickup date" data-toggle="pickupDate" readonly>
+                            <input type="text" class="date-picker" placeholder="Please select a pickup date" data-toggle="pickupDate" readonly>
                             <span class="underline"></span>
                             <br>
-
-                            <input type="text" placeholder="Please select a return date*" data-toggle="returnDate" readonly>
+                            <input type="text" class="date-picker" placeholder="Please select a return date*" data-toggle="returnDate" readonly>
                             <span class="underline"></span>
                             <p class="center">*Maximum 15 day hire</p>
                         </div>
@@ -158,9 +157,8 @@
                     <div id="vehicleOptions" class="vehicle-options"></div>
                 </div>
 
-                <!-- <button id="sectionSevenButtonBack" class="btn fixed-btn btn-style-dark btn-back">Back</button> -->
-                <button id="newJourney" class="btn fixed-btn btn-style-dark">Start a New Journey</button>
-                <button id="editJourney" class="btn fixed-btn btn-style-dark btn-next">Edit this Journey</button>
+                <button id="editJourney" class="btn fixed-btn btn-style-dark btn-prev">Edit this Journey</button>
+                <button id="saveJourney" class="btn fixed-btn btn-style-dark btn-next">Save this Journey</button>
             </div>
         </section>
     </main>
@@ -245,16 +243,26 @@
         </div>
     </div>
 
-    <!-- New Journey Confirmation Popup -->
-    <div id="newJourneyConfirmationPopup" class="new-journey-confirmation-popup">
+    <!-- Save Journey Confirmation Popup -->
+    <div id="saveJourneyNamePopup" class="save-journey-name-popup">
         <div class="inner">
-            <h2 class="center">Are you sure you want to start a new journey?</h2>
-            <p class="center">You'll lose this one if you don't save it.</p>
+            <h2 class="center">Please enter a name for your journey:</h2>
+            <input id="journeyName" type="text" placeholder="My Awesome Journey">
+            <span class="underline"></span>
 
             <div class="buttons">
-                <button id="confirmNewJourney" class="btn fixed-btn btn-style-dark confirm-new-journey-btn">Yes</button>
-                <button id="declineNewJourney" class="btn fixed-btn btn-style-dark decline-new-journey-btn">No</button>
+                <button id="declineSave" class="btn fixed-btn btn-style-dark">Cancel</button>
+                <button id="confirmSave" class="btn fixed-btn btn-style-dark">Save</button>
             </div>
+        </div>
+    </div>
+
+    <!-- Load Journey Popup -->
+    <div id="loadJourneyPopup" class="load-journey-popup">
+        <div class="inner">
+            <i id="loadJourneyPopupClose" class="fa fa-close close-button"></i>
+            <h2 class="center">Here are all of your saved journeys:</h2>
+            <div id="savedTrips"></div>
         </div>
     </div>
 

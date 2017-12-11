@@ -72,14 +72,6 @@
                             }
                         }
                     }
-
-                    .underline {
-                        display: block;
-                        width: 80%;
-                        height: 1px;
-                        margin: 0 auto;
-                        background-color: white;
-                    }
                 }
             }
 
@@ -206,7 +198,8 @@
 
 .how-do-i-work-popup,
 .more-vehicle-info-popup,
-.new-journey-confirmation-popup {
+.save-journey-name-popup,
+.load-journey-popup {
     .inner {
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         border-radius: $borderRadius;
@@ -268,17 +261,33 @@
     }
 }
 
-.new-journey-confirmation-popup {
-    position: fixed;
+.save-journey-name-popup {
+    @include positioning(fixed, $t: 50%, $l: 50%);
     z-index: 300;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
+    transform: translate(-50%, -50%);
     width: 90%;
     max-width: 350px;
     display: none;
 
     .inner {
+        input {
+            outline: 0;
+            border: none;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            background-color: transparent;
+
+            &::-webkit-input-placeholder {
+                color: white;
+                opacity: 0.75;
+            }
+        }
+
+        .underline {
+            margin-bottom: 15px;
+        }
+
         .buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -286,6 +295,12 @@
             padding-top: 15px;
         }
     }
+}
+
+.load-journey-popup {
+    @include positioning(fixed, 0, 0, 0, 0);
+    z-index: 300;
+    display: none;
 }
 
 .vehicle-options {
@@ -312,4 +327,12 @@
             }
         }
     }
+}
+
+.underline {
+    display: block;
+    width: 80%;
+    height: 1px;
+    margin: 0 auto;
+    background-color: white;
 }

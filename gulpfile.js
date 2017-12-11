@@ -178,10 +178,15 @@ gulp.task("clean-dist", () => {
 
 gulp.task("html-replace", () => {
     return gulp.src("./temp/*.html")
-        .pipe(replace("<link rel=\"application/x-font-ttf\" href=\"./fonts/Josefin_Sans/JosefinSans-Thin.ttf\"><link rel=\"application/x-font-ttf\" href=\"./fonts/Josefin_Sans/JosefinSans-Light.ttf\">", "<link href=\"https://fonts.googleapis.com/css?family=Josefin+Sans:100,300\" rel=\"stylesheet\">"))
+        .pipe(replace("<link rel=\"stylesheet\" href=\"./fonts/Josefin_Sans/JosefinSans-Thin.ttf\"><link rel=\"stylesheet\" href=\"./fonts/Josefin_Sans/JosefinSans-Light.ttf\">", "<link href=\"https://fonts.googleapis.com/css?family=Josefin+Sans:100,300\" rel=\"stylesheet\">"))
         .pipe(replace("./css/normalize.css", "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"))
-        .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
         .pipe(replace("./css/font-awesome.min.css", "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"))
+        .pipe(replace("./css/datepicker.min.css", "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.4/datepicker.min.css"))
+        .pipe(replace("./css/slick/slick.css", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"))
+        .pipe(replace("./css/slick/slick-theme.css", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"))
+        .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
+        .pipe(replace("./js/datepicker.min.js", "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.4/datepicker.min.js"))
+        .pipe(replace("./js/slick/slick.min.js", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"))
         .pipe(replace("./js/app.js", "./js/app.min.js"))
         .pipe(gulp.dest("./dist/"));
 });
@@ -203,9 +208,19 @@ gulp.task("dist-file-copy", (cb) => {
     // CSS
     css = gulp.src("./temp/css/style.min.css")
         .pipe(replace("@font-face{font-family:\"Josefin Sans\";src:url(\"../fonts/Josefin_Sans/JosefinSans-Light.ttf\"),url(\"../fonts/Josefin_Sans/JosefinSans-Thin.ttf\")}", ""))
-        .pipe(gulp.dest("./dist/css/"));
+        .pipe(gulp.dest("./dist/css/")),
 
-    return merge(json, img, favicon, css);
+    // Tooltipster
+    tooltipsterBundleCss = gulp.src("./temp/css/tooltipster.bundle.min.css")
+        .pipe(gulp.dest("./dist/css/")),
+    
+    tooltipsterThemeCss = gulp.src("./temp/css/tooltipster-sideTip-punk.min.css")
+        .pipe(gulp.dest("./dist/css/")),
+
+    tooltipsterJs = gulp.src("./temp/js/tooltipster.bundle.min.js")
+        .pipe(gulp.dest("./dist/js/"));
+
+    return merge(json, img, favicon, css, tooltipsterBundleCss, tooltipsterThemeCss, tooltipsterJs);
 });
 
 gulp.task("uglify-js", () => {

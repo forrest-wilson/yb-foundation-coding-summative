@@ -481,7 +481,7 @@ $(document).ready(() => {
                 let popupBaseDir = $("#moreVehicleInfoPopup")[0].children[0];
                 let fuelCost = calculateFuelCost(jsonData.fuelPrice, info.mileage, routeInfo.distance[1]);
                 let hireCost = hireInfo.days.totalDays * info.dailyRate;
-                let totalCost = fuelCost[1] + hireCost;
+                let totalCost = (fuelCost[1] + hireCost).toFixed(2);
 
                 let thingsToDo = [routeInfo.distance[0], hireInfo.persons + " person(s)", hireInfo.days.totalDays + " day(s)", "$" + hireCost + ".00 NZD", "Daily Rate x Hire Duration", fuelCost[0], "$" + jsonData.fuelPrice + "/litre x " + info.mileage + "/100km x " + routeInfo.distance[0], "$" + totalCost + " NZD"];
 

@@ -116,32 +116,16 @@ $(document).ready(() => {
         });
     };
 
-    // Toggles the how do i work overlay
-    function toggleHowDoIWorkOverlay(showing) {
-        switch (showing) {
+    // Generic overlay toggle
+    function toggleOverlay(overlayId, state) {
+        switch (state) {
             case "show":
                 $("#mask").fadeIn(transitionTime);
-                $("#howDoIWorkPopup").fadeIn(transitionTime);
+                $(overlayId).fadeIn(transitionTime);
                 break;
             case "hide":
                 $("#mask").fadeOut(transitionTime);
-                $("#howDoIWorkPopup").fadeOut(transitionTime);
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Toggles the load journey popup
-    function toggleLoadJourneyPopup(showing) {
-        switch (showing) {
-            case "show":
-                $("#mask").fadeIn(transitionTime);
-                $("#loadJourneyPopup").fadeIn(transitionTime);
-                break;
-            case "hide":
-                $("#mask").fadeOut(transitionTime);
-                $("#loadJourneyPopup").fadeOut(transitionTime);
+                $(overlayId).fadeOut(transitionTime);
                 break;
             default:
                 break;
@@ -156,38 +140,6 @@ $(document).ready(() => {
                 break;
             case "hide":
                 $("#backgroundImage").fadeOut(transitionTime);
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Toggles the modal popup displaying vehicle information
-    function toggleVehicleOverlay(showing) {
-        switch (showing) {
-            case "show":
-                $("#mask").fadeIn(transitionTime);
-                $("#moreVehicleInfoPopup").fadeIn(transitionTime);
-                break;
-            case "hide":
-                $("#mask").fadeOut(transitionTime);
-                $("#moreVehicleInfoPopup").fadeOut(transitionTime);
-                break;
-            default:
-                break;
-        }
-    }
-
-    // Toggles the save confirmation window for saving a journey
-    function toggleSaveJourneyConfirmation(showing) {
-        switch (showing) {
-            case "show":
-                $("#mask").fadeIn(transitionTime);
-                $("#saveJourneyNamePopup").fadeIn(transitionTime);
-                break;
-            case "hide":
-                $("#mask").fadeOut(transitionTime);
-                $("#saveJourneyNamePopup").fadeOut(transitionTime);
                 break;
             default:
                 break;
@@ -682,12 +634,12 @@ $(document).ready(() => {
 
     $("#howToText").click((e) => {
         e.preventDefault();
-        toggleHowDoIWorkOverlay("show");
+        toggleOverlay("#howDoIWorkPopup", "show");
     });
 
     $("#howDoIWorkPopupClose").click((e) => {
         e.preventDefault();
-        toggleHowDoIWorkOverlay("hide");
+        toggleOverlay("#howDoIWorkPopup", "hide");
     });
 
     // Form Presentation Event Listeners
@@ -703,12 +655,12 @@ $(document).ready(() => {
     $("#loadJourney").click((e) => {
         e.preventDefault();
         showJourneys();
-        toggleLoadJourneyPopup("show");
+        toggleOverlay("#loadJourneyPopup", "show");
     });
 
     $("#loadJourneyPopupClose").click((e) => {
         e.preventDefault();
-        toggleLoadJourneyPopup("hide");
+        toggleOverlay("#loadJourneyPopup", "hide");
     });
 
     // Section Two
@@ -873,7 +825,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         populateVehicalModal(vehicleInfo, "motorbike", () => {
-            toggleVehicleOverlay("show");
+            toggleOverlay("#moreVehicleInfoPopup", "show");
         });
     });
 
@@ -881,7 +833,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         populateVehicalModal(vehicleInfo, "smallCar", () => {
-            toggleVehicleOverlay("show");
+            toggleOverlay("#moreVehicleInfoPopup", "show");
         });
     });
 
@@ -889,7 +841,7 @@ $(document).ready(() => {
         e.preventDefault();
 
         populateVehicalModal(vehicleInfo, "largeCar", () => {
-            toggleVehicleOverlay("show");
+            toggleOverlay("#moreVehicleInfoPopup", "show");
         });
     });
 
@@ -897,13 +849,13 @@ $(document).ready(() => {
         e.preventDefault();
 
         populateVehicalModal(vehicleInfo, "motorHome", () => {
-            toggleVehicleOverlay("show");
+            toggleOverlay("#moreVehicleInfoPopup", "show");
         });
     });
 
     $("#moreVehicleInfoPopupClose").click((e) => {
         e.preventDefault();
-        toggleVehicleOverlay("hide");
+        toggleOverlay("#moreVehicleInfoPopup", "hide");
     });
 
     // Journey Editing
@@ -919,12 +871,12 @@ $(document).ready(() => {
 
     $("#saveJourney").click((e) => {
         e.preventDefault();
-        toggleSaveJourneyConfirmation("show");
+        toggleOverlay("#saveJourneyNamePopup", "show");
     });
 
     $("#declineSave").click((e) => {
         e.preventDefault();
-        toggleSaveJourneyConfirmation("hide");
+        toggleOverlay("#saveJourneyNamePopup", "hide");
     });
 
     $("#confirmSave").click((e) => {

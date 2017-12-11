@@ -38,7 +38,6 @@ $(document).ready(() => {
 
     // Mutable variables
     let howDoIWorkOverlayShowing = false;
-    let backgroundImageIsShowing = true;
     let vehicleOverlayShowing = false;
     let saveJourneyConfirmationShowing = false;
     let loadJourneyPopupIsShowing = false;
@@ -148,13 +147,19 @@ $(document).ready(() => {
     }
 
     // Toggles the background image based on the backgroundImageIsShowing boolean
-    function toggleBackgroundImage() {
-        if (backgroundImageIsShowing) {
-            $("#backgroundImage").fadeOut(transitionTime);
-            backgroundImageIsShowing = false;
-        } else {
-            $("#backgroundImage").fadeIn(transitionTime);
-            backgroundImageIsShowing = true;
+    function toggleBackgroundImage(showing) {
+        switch (showing) {
+            case "show":
+                $("#backgroundImage").fadeIn(transitionTime);
+                break;
+
+            case "hide":
+                $("#backgroundImage").fadeOut(transitionTime);
+                break;
+
+            default:
+                console.log("Bad case");
+                break;
         }
     }
 
@@ -557,6 +562,9 @@ $(document).ready(() => {
                             }
                         }
 
+                        console.log("vehicle matches", vehicleMatches);
+                        console.log("html vehicle template", htmlVehicleTemplate);
+
                         // Sets the attributes of the vehicleMatches to
                         // properties fetched from the vehicleInfo.json file
                         for (let i in vehicleMatches) {
@@ -581,8 +589,10 @@ $(document).ready(() => {
                             // Slick rendering issue workaround
                             if (vehicleMatches.length === 1) {
                                 $(".slick-track").css("width", "auto");
-                                $(".vehicle-option").css("width", "auto");
-                                $(".vehicle-option").css("float", "none");
+                                $(".vehicle-option").css({
+                                    "width": "auto",
+                                    "float": "none"
+                                });
                             }
                         }, transitionTime);
 
@@ -630,7 +640,7 @@ $(document).ready(() => {
             button.textContent = "Load " + localStorage.key(i);
 
             // Adds an event listener for each loadJourney ID
-            $(document).on("click", "#loadJourney" + i, (e) => {
+            $(document).one("click", "#loadJourney" + i, (e) => {
                 e.preventDefault();
 
                 let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(i)));
@@ -641,9 +651,10 @@ $(document).ready(() => {
                 routeInfo = savedTrip.routeInfo;
 
                 $("#loadJourneyPopup").fadeOut(transitionTime);
+                loadJourneyPopupIsShowing = false;
 
                 getRoute(savedTrip.mapPoints.origin.result.geometry.coordinates, savedTrip.mapPoints.destination.result.geometry.coordinates, savedTrip.mapPoints.waypoints, () => {
-                    toggleBackgroundImage();
+                    toggleBackgroundImage("hide");
 
                     populateHtmlTemplate();
 
@@ -682,7 +693,7 @@ $(document).ready(() => {
     $("#sectionOneButton").click((e) => {
         e.preventDefault();
         showNextPage("#sectionTwo", "#sectionOne");
-        toggleBackgroundImage();
+        toggleBackgroundImage("hide");
     });
 
     $("#loadJourney").click((e) => {
@@ -711,7 +722,7 @@ $(document).ready(() => {
     $("#sectionTwoButtonBack").click((e) => {
         e.preventDefault();
         closeAllTooltips();
-        toggleBackgroundImage();
+        toggleBackgroundImage("show");
         showPreviousPage("#sectionOne", "#sectionTwo");
     });
 

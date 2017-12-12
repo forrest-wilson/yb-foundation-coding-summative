@@ -455,7 +455,7 @@ $(document).ready(() => {
 
     // Shows a modal overlay based on the ajax data retrieved from vehicleInfo.json
     function populateVehicalModal(jsonData, vehicleId, callback) {
-        for (let i in jsonData.vehicles) {
+        for (let i = 0; i < jsonData.vehicles.length; i++) {
             if (jsonData.vehicles[i].vehicle === vehicleId) {
                 let info = jsonData.vehicles[i];
                 let popupBaseDir = $("#moreVehicleInfoPopup")[0].children[0];
@@ -468,7 +468,7 @@ $(document).ready(() => {
                 popupBaseDir.children[1].textContent = info.name;
                 popupBaseDir.children[2].setAttribute("src", info.imageURL);
 
-                for (let j in thingsToDo) {
+                for (let j = 0; j < thingsToDo.length; j++) {
                     popupBaseDir.children[3].children[1].children[0].children[j].children[1].textContent = thingsToDo[j];
                 }
             }
@@ -501,7 +501,7 @@ $(document).ready(() => {
                     let vehicleMatches = [];
 
                     // Adds objects that match the conditions to seperate arrays
-                    for (let i in allVehicles) {
+                    for (let i = 0; i < allVehicles.length; i++) {
                         if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
                             daysMatch.push(allVehicles[i]);
                         } else {
@@ -517,7 +517,7 @@ $(document).ready(() => {
 
                     // Attempts to find matches and appends any that do match
                     // to an array that holds objects that pass both conditions
-                    for (let i in allVehicles) {
+                    for (let i = 0; i < allVehicles.length; i++) {
                         if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
                             vehicleMatches.push(allVehicles[i]);
                         }
@@ -525,7 +525,7 @@ $(document).ready(() => {
 
                     // Sets the attributes of the vehicleMatches to
                     // properties fetched from the vehicleInfo.json file
-                    for (let i in vehicleMatches) {
+                    for (let i = 0; i < vehicleMatches.length; i++) {
                         let template = $.parseHTML(htmlVehicleTemplate)[0];
                         let settableEls = template.children[0].children[0];
 
@@ -638,7 +638,7 @@ $(document).ready(() => {
         }
 
         if (waypoints.length > 1) {
-            for (let i = 1; i < numOfWaypoints; i++) {
+            for (let i = 1; i < waypoints.length; i++) {
                 addGeocoder("#waypoints", map, "Please enter a stop");
                 $("#waypoints")[0].children[i].children[1].value = waypoints[i].result.place_name;
             }
@@ -895,9 +895,14 @@ $(document).ready(() => {
     $("#editJourney").click((e) => {
         e.preventDefault();
         // Removes all slides from slick
-        for (let i in $(".vehicle-option")) {
+        // for (let i in $(".vehicle-option")) {
+        //     $(".vehicle-options").slick("slickRemove", 0);
+        // }
+
+        $(".vehicle-option").each(() => {
             $(".vehicle-options").slick("slickRemove", 0);
-        }
+        });
+
         showPreviousPage("#sectionTwo", "#sectionSeven");
     });
 

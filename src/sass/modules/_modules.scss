@@ -31,10 +31,12 @@
         overflow: scroll;
 
         .inner {
+            max-height: calc(100% - 100px);
+
             .content {
                 .input-wrapper {
-                    @include positioning(absolute, $t: 50%, $l: 50%);
-                    transform: translateX(-50%) translateY(-50%);
+                    @include positioning(fixed, $t: 50%, $l: 50%);
+                    transform: translate(-50%, -50%);
                     width: 100%;
 
                     .mapboxgl-ctrl-geocoder {
@@ -209,6 +211,8 @@
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         border-radius: $borderRadius;
         box-shadow: $boxShadowDark;
+        max-height: 450px;
+        overflow: scroll;
     }
 }
 

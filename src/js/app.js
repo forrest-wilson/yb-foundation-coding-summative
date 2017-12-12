@@ -434,7 +434,7 @@ $(document).ready(() => {
     }
 
     // Calculates the number of days from 2 ms values
-    function calcDays(originMs, destMs, callback) {
+    function calcDays(originMs, destMs) {
         let daysMs = destMs - originMs;
         let days = daysMs / 86400000; // Converting ms to days
        
@@ -444,7 +444,6 @@ $(document).ready(() => {
         } else {
             closeAllTooltips();
             hireInfo.days.totalDays = days;
-            callback();
         }
     }
 
@@ -484,78 +483,76 @@ $(document).ready(() => {
         if (hireInfo.days.startDay && hireInfo.days.endDay) {
             closeAllTooltips();
 
-            calcDays(hireInfo.days.startDay, hireInfo.days.endDay, () => {
-                // Gets the HTML template
-                xhrGet("./ajax/vehicle_template.html", (templateData) => {
-                    htmlVehicleTemplate = templateData
+            calcDays(hireInfo.days.startDay, hireInfo.days.endDay);
+            // Gets the HTML template
+            xhrGet("./ajax/vehicle_template.html", (templateData) => {
+                htmlVehicleTemplate = templateData
 
-                    xhrGet("./json/vehicleInfo.json", (jsonData) => {
-                        vehicleInfo = jsonData;
+                xhrGet("./json/vehicleInfo.json", (jsonData) => {
+                    vehicleInfo = jsonData;
 
-                        let allVehicles = vehicleInfo.vehicles; // array
-                        let daysMatch = [];
-                        let personsMatch = [];
-                        let vehicleMatches = [];
+                    let allVehicles = vehicleInfo.vehicles; // array
+                    let daysMatch = [];
+                    let personsMatch = [];
+                    let vehicleMatches = [];
 
-                        // Adds objects that match the conditions to seperate arrays
-                        for (let i in allVehicles) {
-                            if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
-                                daysMatch.push(allVehicles[i]);
-                            } else {
-                                daysMatch.push(false);
-                            }
-
-                            if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
-                                personsMatch.push(allVehicles[i]);
-                            } else {
-                                personsMatch.push(false);
-                            }
+                    // Adds objects that match the conditions to seperate arrays
+                    for (let i in allVehicles) {
+                        if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
+                            daysMatch.push(allVehicles[i]);
+                        } else {
+                            daysMatch.push(false);
                         }
 
-                        // Attempts to find matches and appends any that do match
-                        // to an array that holds objects that pass both conditions
-                        for (let i in allVehicles) {
-                            if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
-                                vehicleMatches.push(allVehicles[i]);
-                            }
+                        if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
+                            personsMatch.push(allVehicles[i]);
+                        } else {
+                            personsMatch.push(false);
                         }
+                    }
 
-                        // Sets the attributes of the vehicleMatches to
-                        // properties fetched from the vehicleInfo.json file
-                        for (let i in vehicleMatches) {
-                            let template = $.parseHTML(htmlVehicleTemplate)[0];
-                            let settableEls = template.children[0].children[0];
-
-                            template.setAttribute("id", vehicleMatches[i].vehicle);
-
-                            settableEls.children[0].textContent = vehicleMatches[i].name;
-                            settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
-                            settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
-                            settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
-
-                            $(".vehicle-options").slick("slickAdd", template);
+                    // Attempts to find matches and appends any that do match
+                    // to an array that holds objects that pass both conditions
+                    for (let i in allVehicles) {
+                        if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
+                            vehicleMatches.push(allVehicles[i]);
                         }
+                    }
 
-                        // Workaround for the request being too fast for the animation
-                        setTimeout(() => {
-                            showNextPage("#sectionSeven", "#sectionSix");
-                            $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
-                            
-                            // Slick rendering issue workaround
-                            if (vehicleMatches.length === 1) {
-                                $(".slick-track").css("width", "auto");
-                                $(".vehicle-option").css({
-                                    "width": "auto",
-                                    "float": "none"
-                                });
-                            }
-                        }, transitionTime);
+                    // Sets the attributes of the vehicleMatches to
+                    // properties fetched from the vehicleInfo.json file
+                    for (let i in vehicleMatches) {
+                        let template = $.parseHTML(htmlVehicleTemplate)[0];
+                        let settableEls = template.children[0].children[0];
 
-                        $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
-                    });
+                        template.setAttribute("id", vehicleMatches[i].vehicle);
+
+                        settableEls.children[0].textContent = vehicleMatches[i].name;
+                        settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
+                        settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
+                        settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
+
+                        $(".vehicle-options").slick("slickAdd", template);
+                    }
+
+                    // Workaround for the request being too fast for the animation
+                    setTimeout(() => {
+                        showNextPage("#sectionSeven", "#sectionSix");
+                        $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
+                        
+                        // Slick rendering issue workaround
+                        if (vehicleMatches.length === 1) {
+                            $(".slick-track").css("width", "auto");
+                            $(".vehicle-option").css({
+                                "width": "auto",
+                                "float": "none"
+                            });
+                        }
+                    }, transitionTime);
+
+                    $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
                 });
             });
-
         } else {
             $("#datePickers").tooltipster("open");
         }

@@ -4,6 +4,14 @@
 
 // Width Queries
 
+@media screen and (min-width: 400px) {
+    .section {
+        .inner {
+            max-height: calc(100% - 75px)!important;
+        }
+    }
+}
+
 @media screen and (min-width: 740px) {
     .slick-next,
     .slick-prev {

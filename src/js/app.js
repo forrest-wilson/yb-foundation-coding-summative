@@ -582,6 +582,7 @@ $(document).ready(() => {
     // Saves the current journey to the browsers localstorage
     function saveJourney(customName, callback) {
         let master = {};
+        let prexixedName = "wayfindr_" + customName;
 
         master.mapPoints = {};
 
@@ -592,11 +593,11 @@ $(document).ready(() => {
         master.hireInfo = hireInfo;
         master.routeInfo = routeInfo;
 
-        if (localStorage.getItem(customName)) {
+        if (localStorage.getItem(prexixedName)) {
             $("#journeyName").tooltipster("open");
         } else {
             $("#journeyName").tooltipster("close");
-            localStorage.setItem(customName, JSON.stringify(master));
+            localStorage.setItem(prexixedName, JSON.stringify(master));
             if (typeof callback !== "undefined") callback();
         }
     }
@@ -668,18 +669,21 @@ $(document).ready(() => {
             for (let i = 0; i < localStorage.length; i++) {
                 $(document).off("click", "#loadJourney" + i); // Destroy the event handlers as to not create duplicate calls
     
-                let button = document.createElement("button");
-                button.className = "btn btn-style-dark load-trip-button";
-    
-                button.setAttribute("id", "loadJourney" + i);
-                button.textContent = "Load: " + localStorage.key(i);
-    
-                // Adds an event listener for each loadJourney ID
-                $(document).on("click", "#loadJourney" + i, (e) => {
-                    loadJourneyEventHandler(e, i);
-                });
-    
-                $("#savedTrips").append(button);
+                let storageKey = localStorage.key(i);
+
+                if (storageKey.indexOf("wayfindr_") > -1) {
+                    let button = document.createElement("button");
+                    button.className = "btn btn-style-dark load-trip-button";
+                    button.setAttribute("id", "loadJourney" + i);
+                    button.textContent = "Load: " + storageKey.substring(9); // Removes the "wayfindr_" prefix when displaying to the user
+        
+                    // Adds an event listener for each loadJourney ID
+                    $(document).on("click", "#loadJourney" + i, (e) => {
+                        loadJourneyEventHandler(e, i);
+                    });
+        
+                    $("#savedTrips").append(button);
+                }
             }
         } else {
             $("#loadJourneyPopup")[0].children[0].children[1].textContent = "You don't seem to have any saved journeys. Journeys you save will appear here!";
@@ -895,10 +899,6 @@ $(document).ready(() => {
     $("#editJourney").click((e) => {
         e.preventDefault();
         // Removes all slides from slick
-        // for (let i in $(".vehicle-option")) {
-        //     $(".vehicle-options").slick("slickRemove", 0);
-        // }
-
         $(".vehicle-option").each(() => {
             $(".vehicle-options").slick("slickRemove", 0);
         });

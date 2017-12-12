@@ -575,7 +575,6 @@ $(document).ready(() => {
         master.routeInfo = routeInfo;
 
         if (localStorage.getItem(customName)) {
-            console.log("This journey already exists. Please try a different name");
             $("#journeyName").tooltipster("open");
         } else {
             $("#journeyName").tooltipster("close");

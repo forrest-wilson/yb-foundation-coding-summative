@@ -197,6 +197,9 @@ gulp.task("dist-file-copy", (cb) => {
     const json = gulp.src("./temp/json/*.json")
         .pipe(gulp.dest("./dist/json/")),
 
+    ajaxData = gulp.src("./temp/ajax/*.*")
+        .pipe(gulp.dest("./dist/ajax/")),
+
     // Images
     img = gulp.src("./temp/img/**/*.*")
         .pipe(gulp.dest("./dist/img/")),
@@ -220,7 +223,7 @@ gulp.task("dist-file-copy", (cb) => {
     tooltipsterJs = gulp.src("./temp/js/tooltipster.bundle.min.js")
         .pipe(gulp.dest("./dist/js/"));
 
-    return merge(json, img, favicon, css, tooltipsterBundleCss, tooltipsterThemeCss, tooltipsterJs);
+    return merge(json, ajaxData, img, favicon, css, tooltipsterBundleCss, tooltipsterThemeCss, tooltipsterJs);
 });
 
 gulp.task("uglify-js", () => {

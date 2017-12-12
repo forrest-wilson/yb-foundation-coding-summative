@@ -317,6 +317,7 @@ $(document).ready(() => {
         request += "&access_token=" + mapboxgl.accessToken;
 
         xhrGet(request, (data) => {
+            console.log("Data is:", data);
             let route = data.routes[0].geometry;
             let source = map.getSource("route");
 
@@ -588,17 +589,58 @@ $(document).ready(() => {
         e.preventDefault();
 
         let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(index)));
+        console.log("Saved Trip from JSON:", savedTrip);
 
+        // All MapPoints
+        let allMapPoints = savedTrip.mapPoints;
         let oldMarkers = mapPoints.markers;
+        allMapPoints.markers = oldMarkers;
 
-        mapPoints = savedTrip.mapPoints;
-        mapPoints.markers = oldMarkers;
-        hireInfo = savedTrip.hireInfo;
-        routeInfo = savedTrip.routeInfo;
+        // Waypoints
+        waypoints = allMapPoints.waypoints;
+        console.log("Waypoints", waypoints);
 
+        // All HireInfo
+        let allHireInfo = savedTrip.hireInfo;
+        console.log(allHireInfo);
+
+        // Route Info
+        let allRouteInfo = savedTrip.routeInfo;
+        console.log(allRouteInfo);
+
+        // Final Global Assignment
+        mapPoints = allMapPoints;
+        hireInfo = allHireInfo;
+        routeInfo = allRouteInfo;
+
+        // Add placeholders to input fields and such
+        $("#origin")[0].children[0].children[1].value = allMapPoints.origin.result.place_name;
+
+        if (waypoints.length === 0) {
+            $("#waypoints")[0].children[0].children[1].value = "";
+        }
+        
+        if (waypoints.length > 0) {
+            $("#waypoints")[0].children[0].children[1].value = waypoints[0].result.place_name;
+        }
+
+        if (waypoints.length > 1) {
+            for (let i = 1; i < numOfWaypoints; i++) {
+                addGeocoder("#waypoints", map, "Please enter a stop");
+                $("#waypoints")[0].children[i].children[1].value = waypoints[i].result.place_name;
+            }
+        }
+
+        $("#destination")[0].children[0].children[1].value = allMapPoints.destination.result.place_name;
+        $("#peopleCounterNumber")[0].textContent = allHireInfo.persons;
+        $("#datePickers")[0].children[0].value = $("[data-toggle=\"pickupDate\"]").datepicker("formatDate", new Date(allHireInfo.days.startDay));
+        $("#datePickers")[0].children[3].value = $("[data-toggle=\"returnDate\"]").datepicker("formatDate", new Date(allHireInfo.days.endDay));
+
+        // Fade the popup out
         $("#loadJourneyPopup").fadeOut(transitionTime);
 
-        getRoute(savedTrip.mapPoints.origin.result.geometry.coordinates, savedTrip.mapPoints.destination.result.geometry.coordinates, savedTrip.mapPoints.waypoints, () => {
+        // Get the route from the savedTrip Obj
+        getRoute(allMapPoints.origin.result.geometry.coordinates, allMapPoints.destination.result.geometry.coordinates, waypoints, () => {
             toggleBackgroundImage("hide");
             populateHtmlTemplate();
             showNextPage("#sectionSeven", "#sectionOne");
@@ -612,7 +654,7 @@ $(document).ready(() => {
             $(document).off("click", "#loadJourney" + i);
 
             let button = document.createElement("button");
-            button.className = "btn btn-style-dark";
+            button.className = "btn btn-style-dark load-trip-button";
 
             button.setAttribute("id", "loadJourney" + i);
             button.textContent = "Load: " + localStorage.key(i);
@@ -742,6 +784,8 @@ $(document).ready(() => {
 
     $("#sectionFourButtonNext").click((e) => {
         e.preventDefault();
+
+        console.log(mapPoints);
 
         if (mapPoints.destination) {
             getRoute(mapPoints.origin.result.geometry.coordinates, mapPoints.destination.result.geometry.coordinates, mapPoints.waypoints, () => {

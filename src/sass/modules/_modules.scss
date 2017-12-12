@@ -308,8 +308,13 @@
     z-index: 300;
     display: none;
     width: 100%;
+    max-width: 400px;
     max-height: 100%;
     overflow: scroll;
+
+    .load-trip-button {
+        margin: 10px 0;
+    }
 }
 
 .vehicle-options {

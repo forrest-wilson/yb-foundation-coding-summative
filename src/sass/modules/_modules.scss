@@ -211,8 +211,6 @@
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         border-radius: $borderRadius;
         box-shadow: $boxShadowDark;
-        max-height: 450px;
-        overflow: scroll;
     }
 }
 
@@ -313,8 +311,11 @@
     display: none;
     width: 100%;
     max-width: 400px;
-    max-height: 100%;
-    overflow: scroll;
+
+    .inner {
+        max-height: 450px;
+        overflow: scroll;
+    }
 
     .load-trip-button {
         margin: 10px 0;

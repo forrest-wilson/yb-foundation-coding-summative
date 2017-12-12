@@ -103,8 +103,13 @@
             }
 
             .section-one-button {
-                @include positioning(fixed, $l: 10px, $r: 10px, $b: 10px);
-                width: calc(100% - 20px);
+                @include positioning(fixed, $l: auto, $r: 10px, $b: 10px);
+                width: calc(50% - 15px);
+            }
+
+            .load-button {
+                left: 10px;
+                right: auto;
             }
         }
     }
@@ -298,9 +303,13 @@
 }
 
 .load-journey-popup {
-    @include positioning(fixed, 0, 0, 0, 0);
+    @include positioning(fixed, $t: 50%, $l: 50%);
+    transform: translate(-50%, -50%);
     z-index: 300;
     display: none;
+    width: 100%;
+    max-height: 100%;
+    overflow: scroll;
 }
 
 .vehicle-options {

@@ -52,7 +52,7 @@
                 </div>
 
                 <button id="sectionOneButton" class="btn btn-style-dark section-one-button">Get Started!</button>
-                <button id="loadJourney" class="btn btn-style-dark load-button">Load a Journey</button>
+                <button id="loadJourney" class="btn btn-style-dark load-button section-one-button">Load a Journey</button>
             </div>
         </section>
 
@@ -247,7 +247,7 @@
     <div id="saveJourneyNamePopup" class="save-journey-name-popup">
         <div class="inner">
             <h2 class="center">Please enter a name for your journey:</h2>
-            <input id="journeyName" type="text" placeholder="My Awesome Journey">
+            <input id="journeyName" class="tooltip" type="text" placeholder="My Awesome Journey" title="This name already exists">
             <span class="underline"></span>
 
             <div class="buttons">
@@ -258,7 +258,7 @@
     </div>
 
     <!-- Load Journey Popup -->
-    <div id="loadJourneyPopup" class="load-journey-popup">
+    <div id="loadJourneyPopup" class="load-journey-popup inner">
         <div class="inner">
             <i id="loadJourneyPopupClose" class="fa fa-close close-button"></i>
             <h2 class="center">Here are all of your saved journeys:</h2>

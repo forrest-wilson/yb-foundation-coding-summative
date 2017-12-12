@@ -211,6 +211,7 @@ $(document).ready(() => {
         $("#waypoints").tooltipster("close");
         $("#peopleCounter").tooltipster("close");
         $("#datePickers").tooltipster("close");
+        $("#journeyName").tooltipster("close");
     }
 
     // Generic AJAX GET function
@@ -519,9 +520,6 @@ $(document).ready(() => {
                             }
                         }
 
-                        console.log("vehicle matches", vehicleMatches);
-                        console.log("html vehicle template", htmlVehicleTemplate);
-
                         // Sets the attributes of the vehicleMatches to
                         // properties fetched from the vehicleInfo.json file
                         for (let i in vehicleMatches) {
@@ -572,50 +570,57 @@ $(document).ready(() => {
         master.mapPoints.destination = mapPoints.destination;
         master.mapPoints.origin = mapPoints.origin;
         master.mapPoints.waypoints = mapPoints.waypoints;
-        master.mapPoints.markers = [];
 
         master.hireInfo = hireInfo;
         master.routeInfo = routeInfo;
 
-        console.log("Master", master);
-
         if (localStorage.getItem(customName)) {
             console.log("This journey already exists. Please try a different name");
+            $("#journeyName").tooltipster("open");
         } else {
+            $("#journeyName").tooltipster("close");
             localStorage.setItem(customName, JSON.stringify(master));
             if (typeof callback !== "undefined") callback();
         }
     }
 
+    // Event handler for loading a journey
+    function loadJourneyEventHandler(e, index) {
+        e.preventDefault();
+
+        let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(index)));
+
+        let oldMarkers = mapPoints.markers;
+
+        mapPoints = savedTrip.mapPoints;
+        mapPoints.markers = oldMarkers;
+        hireInfo = savedTrip.hireInfo;
+        routeInfo = savedTrip.routeInfo;
+
+        $("#loadJourneyPopup").fadeOut(transitionTime);
+
+        getRoute(savedTrip.mapPoints.origin.result.geometry.coordinates, savedTrip.mapPoints.destination.result.geometry.coordinates, savedTrip.mapPoints.waypoints, () => {
+            toggleBackgroundImage("hide");
+            populateHtmlTemplate();
+            showNextPage("#sectionSeven", "#sectionOne");
+        });
+    }
+
     // Loads a journey from localStorage
     function showJourneys() {
-        $("#savedTrips").empty(); // Makes sure the UL is empty before appending any more
+        $("#savedTrips").empty(); // Makes sure the Div is empty before appending any more
         for (let i = 0; i < localStorage.length; i++) {
+            $(document).off("click", "#loadJourney" + i);
+
             let button = document.createElement("button");
             button.className = "btn btn-style-dark";
+
             button.setAttribute("id", "loadJourney" + i);
-            button.textContent = "Load " + localStorage.key(i);
+            button.textContent = "Load: " + localStorage.key(i);
 
             // Adds an event listener for each loadJourney ID
-            $(document).one("click", "#loadJourney" + i, (e) => {
-                e.preventDefault();
-
-                let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(i)));
-                console.log(savedTrip);
-
-                mapPoints = savedTrip.mapPoints;
-                hireInfo = savedTrip.hireInfo;
-                routeInfo = savedTrip.routeInfo;
-
-                $("#loadJourneyPopup").fadeOut(transitionTime);
-
-                getRoute(savedTrip.mapPoints.origin.result.geometry.coordinates, savedTrip.mapPoints.destination.result.geometry.coordinates, savedTrip.mapPoints.waypoints, () => {
-                    toggleBackgroundImage("hide");
-
-                    populateHtmlTemplate();
-
-                    showNextPage("#sectionSeven", "#sectionOne");
-                });
+            $(document).on("click", "#loadJourney" + i, (e) => {
+                loadJourneyEventHandler(e, i);
             });
 
             $("#savedTrips").append(button);
@@ -876,12 +881,15 @@ $(document).ready(() => {
 
     $("#declineSave").click((e) => {
         e.preventDefault();
+        closeAllTooltips();
         toggleOverlay("#saveJourneyNamePopup", "hide");
     });
 
     $("#confirmSave").click((e) => {
         e.preventDefault();
-        saveJourney($("#journeyName").val());
+        saveJourney($("#journeyName").val(), () => {
+            toggleOverlay("#saveJourneyNamePopup", "hide");
+        });
     });
 
     //

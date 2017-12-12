@@ -663,7 +663,7 @@ $(document).ready(() => {
 
     // Loads a journey from localStorage
     function showJourneys() {
-        $("#savedTrips").empty(); // Makes sure the Div is empty before appending any more
+        $("#savedTrips").empty(); // Makes sure the div is empty before appending any more
         if (localStorage.length !== 0) {
             $("#loadJourneyPopup")[0].children[0].children[1].textContent = "Here are all of your saved journeys";
             for (let i = 0; i < localStorage.length; i++) {

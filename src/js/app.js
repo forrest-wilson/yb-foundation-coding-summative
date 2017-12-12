@@ -4,12 +4,10 @@ $(document).ready(() => {
     ///////////////////////////////
 
     // Immutable variables
-    const carsJsonUrl = "../json/vehicleInfo.json";
     const nzCenter = [172.5, -41.278919]; // Center coordinates for NZ
     const transitionTime = 400;
     const scaleFactor = 2;
     const baseDirectionsUrl = "https://api.mapbox.com/directions/v5/mapbox/driving/";
-    const baseGeocodingUrl = "https://api.mapbox.com/geocoding/v5/mapbox.places/";
 
     ////////////////
     //// Mapbox ////
@@ -24,16 +22,6 @@ $(document).ready(() => {
         center: nzCenter, // [lng, lat].
         zoom: 4.5,
         interactive: false
-    });
-
-    // Mapbox Directions
-    const directions = new MapboxDirections({
-        accessToken: mapboxgl.accessToken,
-        units: "metric",
-        controls: {
-            inputs: false,
-            instructions: false
-        }
     });
 
     // Mutable variables
@@ -117,7 +105,7 @@ $(document).ready(() => {
 
         // Initialises the event listeners for each vehicle type
         createVehicleEventListeners(["motorbike", "smallCar", "largeCar", "motorHome"]);
-    };
+    }
 
     // Generic overlay toggle
     function toggleOverlay(overlayId, state) {
@@ -246,7 +234,6 @@ $(document).ready(() => {
             placeholder: placeholder
         });
         const ctrlEls = $(".mapboxgl-ctrl-top-right");
-        const geocoderInput = $(".mapboxgl-ctrl-geocoder");
 
         // Adds the control to the map. Might be able to add to any element
         map.addControl(geocoder);
@@ -418,7 +405,6 @@ $(document).ready(() => {
 
     // Calculate the recommended days for hire
     function recommendedHireDays(totalDistance) {
-        let minDaysHire = 1; // Default minimum days for vehicle hire
         let maxDistancePerDay = 450; // KM value
         let recommendedHireDaysTotal = totalDistance / maxDistancePerDay;
         let recommendedDays = null;

@@ -27,15 +27,12 @@ h1 {
     font-size: 48px;
 }
 
-h3 {
-    font-size: 12px;
-}
-
 button {
     border: none;
     border-radius: $borderRadius;
     cursor: pointer;
     width: 100%;
+    font-size: 20px;
 
     &:focus {
         outline: 0;
@@ -53,7 +50,7 @@ button {
 }
 
 input {
-    font-size: 16px!important; // Is being overwritten by the mapbox-gl-directions.css file
+    font-size: 20px!important; // Is being overwritten by the mapbox-gl-directions.css file
 }
 
 // Classes

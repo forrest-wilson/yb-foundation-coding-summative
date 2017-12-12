@@ -114,6 +114,9 @@ $(document).ready(() => {
             autoplay: true,
             autoplaySpeed: 1
         });
+
+        // Initialises the event listeners for each vehicle type
+        createVehicleEventListeners(["motorbike", "smallCar", "largeCar", "motorHome"]);
     };
 
     // Generic overlay toggle
@@ -449,6 +452,19 @@ $(document).ready(() => {
     function calculateFuelCost(pricePerLitre, vehicleMileage, tripDistance) {
         let fuelCost = pricePerLitre * (vehicleMileage/100) * tripDistance;
         return ["$" + fuelCost.toFixed(2) + " NZD", parseFloat(fuelCost.toFixed(2))];
+    }
+
+    // Creates the event listeners for each of the vehicle types
+    function createVehicleEventListeners(idsNoHash) {
+        for (let i = 0; i < idsNoHash.length; i++) {
+            $(document).on("click", "#" + idsNoHash[i] + "MoreInfo", (e) => {
+                e.preventDefault();
+
+                populateVehicalModal(vehicleInfo, idsNoHash[i], () => {
+                    toggleOverlay("#moreVehicleInfoPopup", "show");
+                });
+            });
+        }
     }
 
     // Shows a modal overlay based on the ajax data retrieved from vehicleInfo.json
@@ -857,37 +873,6 @@ $(document).ready(() => {
     // Section Seven
 
     // Modal Overlay Buttons
-    $(document).on("click", "#motorbikeMoreInfo", (e) => {
-        e.preventDefault();
-
-        populateVehicalModal(vehicleInfo, "motorbike", () => {
-            toggleOverlay("#moreVehicleInfoPopup", "show");
-        });
-    });
-
-    $(document).on("click", "#smallCarMoreInfo", (e) => {
-        e.preventDefault();
-
-        populateVehicalModal(vehicleInfo, "smallCar", () => {
-            toggleOverlay("#moreVehicleInfoPopup", "show");
-        });
-    });
-
-    $(document).on("click", "#largeCarMoreInfo", (e) => {
-        e.preventDefault();
-
-        populateVehicalModal(vehicleInfo, "largeCar", () => {
-            toggleOverlay("#moreVehicleInfoPopup", "show");
-        });
-    });
-
-    $(document).on("click", "#motorHomeMoreInfo", (e) => {
-        e.preventDefault();
-
-        populateVehicalModal(vehicleInfo, "motorHome", () => {
-            toggleOverlay("#moreVehicleInfoPopup", "show");
-        });
-    });
 
     $("#moreVehicleInfoPopupClose").click((e) => {
         e.preventDefault();

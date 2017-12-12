@@ -317,7 +317,6 @@ $(document).ready(() => {
         request += "&access_token=" + mapboxgl.accessToken;
 
         xhrGet(request, (data) => {
-            console.log("Data is:", data);
             let route = data.routes[0].geometry;
             let source = map.getSource("route");
 
@@ -589,7 +588,6 @@ $(document).ready(() => {
         e.preventDefault();
 
         let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(index)));
-        console.log("Saved Trip from JSON:", savedTrip);
 
         // All MapPoints
         let allMapPoints = savedTrip.mapPoints;
@@ -598,15 +596,12 @@ $(document).ready(() => {
 
         // Waypoints
         waypoints = allMapPoints.waypoints;
-        console.log("Waypoints", waypoints);
 
         // All HireInfo
         let allHireInfo = savedTrip.hireInfo;
-        console.log(allHireInfo);
 
         // Route Info
         let allRouteInfo = savedTrip.routeInfo;
-        console.log(allRouteInfo);
 
         // Final Global Assignment
         mapPoints = allMapPoints;

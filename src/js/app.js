@@ -498,77 +498,97 @@ $(document).ready(() => {
             closeAllTooltips();
 
             calcDays(hireInfo.days.startDay, hireInfo.days.endDay);
-            // Gets the HTML template
-            xhrGet("./ajax/vehicle_template.html", (templateData) => {
-                htmlVehicleTemplate = templateData;
-            });
 
-            // Gets the vehicleInfo.json
-            xhrGet("./json/vehicleInfo.json", (jsonData) => {
-                vehicleInfo = jsonData;
+            if (hireInfo.days.totalDays > 0 && hireInfo.days.totalDays <= 15) {
+                // Gets the HTML template
+                xhrGet("./ajax/vehicle_template.html", (templateData) => {
+                    htmlVehicleTemplate = templateData;
+                });
 
-                let allVehicles = vehicleInfo.vehicles; // array
-                let daysMatch = [];
-                let personsMatch = [];
-                let vehicleMatches = [];
+                // Gets the vehicleInfo.json
+                xhrGet("./json/vehicleInfo.json", (jsonData) => {
+                    vehicleInfo = jsonData;
 
-                // Adds objects that match the conditions to seperate arrays
-                for (let i in allVehicles) {
-                    if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
-                        daysMatch.push(allVehicles[i]);
+                    let allVehicles = vehicleInfo.vehicles; // array
+                    let daysMatch = [];
+                    let personsMatch = [];
+                    let vehicleMatches = [];
+
+                    // Adds objects that match the conditions to seperate arrays
+                    for (let i in allVehicles) {
+                        if (hireInfo.days.totalDays >= allVehicles[i].hireDays.min && hireInfo.days.totalDays <= allVehicles[i].hireDays.max) {
+                            daysMatch.push(allVehicles[i]);
+                        } else {
+                            daysMatch.push(false);
+                        }
+
+                        if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
+                            personsMatch.push(allVehicles[i]);
+                        } else {
+                            personsMatch.push(false);
+                        }
+                    }
+
+                    // Attempts to find matches and appends any that do match
+                    // to an array that holds objects that pass both conditions
+                    for (let i in allVehicles) {
+                        if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
+                            vehicleMatches.push(allVehicles[i]);
+                        }
+                    }
+
+                    // Sets the attributes of the vehicleMatches to
+                    // properties fetched from the vehicleInfo.json file
+                    for (let i in vehicleMatches) {
+                        let template = $.parseHTML(htmlVehicleTemplate)[0];
+                        let settableEls = template.children[0].children[0];
+
+                        template.setAttribute("id", vehicleMatches[i].vehicle);
+
+                        settableEls.children[0].textContent = vehicleMatches[i].name;
+                        settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
+                        settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
+                        settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
+
+                        $(".vehicle-options").slick("slickAdd", template);
+                    }
+
+                    // Workaround for the request being too fast for the animation
+                    setTimeout(() => {
+                        showNextPage("#sectionSeven", "#sectionSix");
+                        $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
+                        
+                        switch (vehicleMatches.length) {
+                            case 0:
+                                toggleOverlay("#noVehicleMatchesPopup", "show");
+                                break;
+                            case 1:
+                                // Slick rendering issue workaround
+                                $(".slick-track").css("width", "auto");
+                                $(".vehicle-option").css({
+                                    "width": "auto",
+                                    "float": "none"
+                                });
+                                break;
+                            default:
+                                break;
+                        }
+                    }, transitionTime);
+
+                    if (vehicleMatches.length <= 1) {
+                        $("#sectionSeven .inner .content p").css("display", "none");
                     } else {
-                        daysMatch.push(false);
+                        $("#sectionSeven .inner .content p").css("display", "block");
                     }
 
-                    if (hireInfo.persons >= allVehicles[i].persons.min && hireInfo.persons <= allVehicles[i].persons.max) {
-                        personsMatch.push(allVehicles[i]);
-                    } else {
-                        personsMatch.push(false);
-                    }
-                }
-
-                // Attempts to find matches and appends any that do match
-                // to an array that holds objects that pass both conditions
-                for (let i in allVehicles) {
-                    if ((daysMatch[i] === personsMatch[i]) && (daysMatch[i] && personsMatch[i] !== false)) {
-                        vehicleMatches.push(allVehicles[i]);
-                    }
-                }
-
-                // Sets the attributes of the vehicleMatches to
-                // properties fetched from the vehicleInfo.json file
-                for (let i in vehicleMatches) {
-                    let template = $.parseHTML(htmlVehicleTemplate)[0];
-                    let settableEls = template.children[0].children[0];
-
-                    template.setAttribute("id", vehicleMatches[i].vehicle);
-
-                    settableEls.children[0].textContent = vehicleMatches[i].name;
-                    settableEls.children[1].setAttribute("src", vehicleMatches[i].imageURL);
-                    settableEls.children[2].textContent = "$" + vehicleMatches[i].dailyRate + ".00/day";
-                    settableEls.children[3].setAttribute("id", vehicleMatches[i].vehicle + "MoreInfo");
-
-                    $(".vehicle-options").slick("slickAdd", template);
-                }
-
-                // Workaround for the request being too fast for the animation
-                setTimeout(() => {
-                    showNextPage("#sectionSeven", "#sectionSix");
-                    $(".vehicle-options").slick("slickPause"); // Slick rendering issue workaround
-                    
-                    // Slick rendering issue workaround
-                    if (vehicleMatches.length === 1) {
-                        $(".slick-track").css("width", "auto");
-                        $(".vehicle-option").css({
-                            "width": "auto",
-                            "float": "none"
-                        });
-                    }
-                }, transitionTime);
-
-                $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
-            });
+                    $(".vehicle-options").slick("slickGoTo", 0); // Slick rendering issue workaround
+                });
+            } else {
+                $("#datePickers").tooltipster("content", "Please make sure the dates selected are between 1 and 15 days");
+                $("#datePickers").tooltipster("open");
+            }
         } else {
+            $("#datePickers").tooltipster("content", "Please make sure you have selected a start and end date");
             $("#datePickers").tooltipster("open");
         }
     }
@@ -911,6 +931,12 @@ $(document).ready(() => {
         saveJourney($("#journeyName").val(), () => {
             toggleOverlay("#saveJourneyNamePopup", "hide");
         });
+    });
+
+    $("#modifyRequestButton").click((e) => {
+        e.preventDefault();
+        toggleOverlay("#noVehicleMatchesPopup", "hide");
+        showPreviousPage("#sectionFive", "#sectionSeven");
     });
 
     //

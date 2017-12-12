@@ -206,7 +206,8 @@
 .how-do-i-work-popup,
 .more-vehicle-info-popup,
 .save-journey-name-popup,
-.load-journey-popup {
+.load-journey-popup,
+.no-vehicle-matches-popup {
     .inner {
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         border-radius: $borderRadius;
@@ -304,7 +305,8 @@
     }
 }
 
-.load-journey-popup {
+.load-journey-popup,
+.no-vehicle-matches-popup {
     @include positioning(fixed, $t: 50%, $l: 50%);
     transform: translate(-50%, -50%);
     z-index: 300;

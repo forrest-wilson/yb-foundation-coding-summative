@@ -574,7 +574,7 @@ $(document).ready(() => {
     }
 
     // Saves the current journey to the browsers localstorage
-    function saveJourney(customName, completionHandler) {
+    function saveJourney(customName, callback) {
         let master = {};
 
         master.mapPoints = {};
@@ -591,7 +591,7 @@ $(document).ready(() => {
         } else {
             $("#journeyName").tooltipster("close");
             localStorage.setItem(customName, JSON.stringify(master));
-            if (typeof callback !== "undefined") completionHandler();
+            if (typeof callback !== "undefined") callback();
         }
     }
 
@@ -657,21 +657,26 @@ $(document).ready(() => {
     // Loads a journey from localStorage
     function showJourneys() {
         $("#savedTrips").empty(); // Makes sure the Div is empty before appending any more
-        for (let i = 0; i < localStorage.length; i++) {
-            $(document).off("click", "#loadJourney" + i); // Destroy the event handlers as to not create duplicate calls
-
-            let button = document.createElement("button");
-            button.className = "btn btn-style-dark load-trip-button";
-
-            button.setAttribute("id", "loadJourney" + i);
-            button.textContent = "Load: " + localStorage.key(i);
-
-            // Adds an event listener for each loadJourney ID
-            $(document).on("click", "#loadJourney" + i, (e) => {
-                loadJourneyEventHandler(e, i);
-            });
-
-            $("#savedTrips").append(button);
+        if (localStorage.length !== 0) {
+            $("#loadJourneyPopup")[0].children[0].children[1].textContent = "Here are all of your saved journeys";
+            for (let i = 0; i < localStorage.length; i++) {
+                $(document).off("click", "#loadJourney" + i); // Destroy the event handlers as to not create duplicate calls
+    
+                let button = document.createElement("button");
+                button.className = "btn btn-style-dark load-trip-button";
+    
+                button.setAttribute("id", "loadJourney" + i);
+                button.textContent = "Load: " + localStorage.key(i);
+    
+                // Adds an event listener for each loadJourney ID
+                $(document).on("click", "#loadJourney" + i, (e) => {
+                    loadJourneyEventHandler(e, i);
+                });
+    
+                $("#savedTrips").append(button);
+            }
+        } else {
+            $("#loadJourneyPopup")[0].children[0].children[1].textContent = "You don't seem to have any saved journeys. Journeys you save will appear here!";
         }
     }
 

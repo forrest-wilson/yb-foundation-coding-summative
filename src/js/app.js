@@ -284,6 +284,12 @@ $(document).ready(() => {
                 default:
                     break;
             }
+
+            map.flyTo({
+                center: e.result.center,
+                zoom: 11,
+                speed: 2.5
+            });
         });
     }
 

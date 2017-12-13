@@ -140,7 +140,7 @@
 @media screen and (min-height: 800px) and (min-width: 600px) {
     .more-vehicle-info-popup {
         max-width: 600px!important;
-        max-height: 540px!important;
+        max-height: 590px!important;
 
         .journey-wrapper {
             float: left;
@@ -159,6 +159,10 @@
                 content: "";
                 display: table;
             }
+        }
+
+        .thanks {
+            width: 100%;
         }
     }
 }

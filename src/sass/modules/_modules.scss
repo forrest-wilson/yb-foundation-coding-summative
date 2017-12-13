@@ -2,17 +2,20 @@
 //// Modules SASS ////
 //////////////////////
 
-.header {
-    @include positioning(fixed, 0px, $l: 0px, $r: 0px);
-    height: 50px;
+.how-to-text {
+    @include positioning(absolute, $r: 0px);
+    display: inline-block;
+    line-height: 50px;
+    padding: 0px 20px;
     z-index: 100;
+}
 
-    .how-to-text {
-        @include positioning(absolute, $r: 0px);
-        display: inline-block;
-        line-height: 50px;
-        padding: 0px 20px;
-    }
+.show-hide-map {
+    @include positioning(absolute, $l: 0px);
+    display: inline-block;
+    line-height: 50px;
+    padding: 0px 20px;
+    z-index: 500;
 }
 
 .main {
@@ -23,6 +26,8 @@
         position: relative;
         height: 100%;
         padding-top: 50px;
+        overflow: scroll;
+        max-height: calc(100% - 100px);
     }
 
     .section {
@@ -31,8 +36,6 @@
         overflow: scroll;
 
         .inner {
-            max-height: calc(100% - 100px);
-
             .content {
                 .input-wrapper {
                     @include positioning(fixed, $t: 50%, $l: 50%);

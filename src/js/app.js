@@ -45,6 +45,7 @@ $(document).ready(() => {
 
     // Mutable variables
     let waypoints = [];
+    let isContentShowing = true;
 
     // Map properties
     let mapPoints = {
@@ -153,6 +154,17 @@ $(document).ready(() => {
                 break;
             default:
                 break;
+        }
+    }
+
+    // Toggle the content to view the map better
+    function toggleContent() {
+        if (isContentShowing) {
+            $("#sectionSeven .inner .content").fadeOut(transitionTime);
+            isContentShowing = false;
+        } else {
+            $("#sectionSeven .inner .content").fadeIn(transitionTime);
+            isContentShowing = true;
         }
     }
 
@@ -734,6 +746,11 @@ $(document).ready(() => {
     //
 
     // "How to" event listeners
+
+    $("#showHideMap").click((e) => {
+        e.preventDefault();
+        toggleContent();
+    });
 
     $("#howToText").click((e) => {
         e.preventDefault();

@@ -715,6 +715,8 @@ $(document).ready(() => {
 
     // Loads a journey from localStorage
     function showJourneys() {
+        wayfindrSavedJourneys = [];
+        wayfindrSavedKey = [];
         $("#savedTrips").empty(); // Makes sure the div is empty before appending any more
         for (let i = 0; i < localStorage.length; i++) {
             if (localStorage.key(i).indexOf("wayfindr_") > -1) {

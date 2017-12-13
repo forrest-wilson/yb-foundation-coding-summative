@@ -116,9 +116,13 @@ gulp.task("local-file-copy", () => {
 
     // Slick AJAX Loader
     slickAjaxLoader = gulp.src("./node_modules/slick-carousel/slick/ajax-loader.gif")
-        .pipe(gulp.dest("./temp/css/slick/"));
+        .pipe(gulp.dest("./temp/css/slick/")),
 
-    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS, slickCSS, slickThemeCSS, slickJS, slickFonts, slickAjaxLoader);
+    // Animate.css
+    animate = gulp.src("./node_modules/animate.css/animate.min.css")
+        .pipe(gulp.dest("./temp/css/"));
+
+    return merge(jQ, normalize, json, img, fonts, favicon, faCSS, faFont, tooltipsterCSS, tooltipsterThemeCSS, tooltipsterJS, datePickerJS, datePickerCSS, slickCSS, slickThemeCSS, slickJS, slickFonts, slickAjaxLoader, animate);
 });
 
 // Copies the HTML files

@@ -1,4 +1,23 @@
 $(document).ready(() => {
+
+    ///////////////////////////
+    //// jQuery Extentions ////
+    ///////////////////////////
+
+    // Animate.css jquery extension
+    $.fn.extend({
+        animateCss: function (animationName, callback) {
+            var animationEnd = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
+            this.addClass('animated ' + animationName).one(animationEnd, function() {
+                $(this).removeClass('animated ' + animationName);
+                if (callback) {
+                  callback();
+                }
+            });
+            return this;
+        }
+    });
+
     ///////////////////////////////
     //// Variable Declarations ////
     ///////////////////////////////
@@ -270,9 +289,11 @@ $(document).ready(() => {
             switch (id) {
                 case "#origin":
                     mapPoints.origin = e;
+                    $("#sectionTwoButtonNext").animateCss("bounce");
                     break;
                 case "#destination":
                     mapPoints.destination = e;
+                    $("#sectionFourButtonNext").animateCss("bounce");
                     break;
                 case "#waypoints":
                     if (waypoints === []) {
@@ -280,6 +301,7 @@ $(document).ready(() => {
                     } else {
                         waypoints.splice(arrayIndex, 1, e);
                     }
+                    $("#sectionThreeButtonNext").animateCss("bounce");
                     break;
                 default:
                     break;
@@ -878,6 +900,13 @@ $(document).ready(() => {
         autoHide: true,
         format: "dd/mm/yyyy",
         startDate: new Date()
+    });
+
+    $("[data-toggle=\"pickupDate\"], [data-toggle=\"returnDate\"]").on("pick.datepicker", (e) => {
+        if (hireInfo.days.startDay && hireInfo.days.endDay) {
+            // Fires off the bounce effect
+            $("#sectionSixButtonNext").animateCss("bounce");
+        }
     });
 
     $("#sectionSixButtonNext").click((e) => {

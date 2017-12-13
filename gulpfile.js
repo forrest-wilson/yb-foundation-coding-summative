@@ -188,6 +188,7 @@ gulp.task("html-replace", () => {
         .pipe(replace("./css/datepicker.min.css", "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.4/datepicker.min.css"))
         .pipe(replace("./css/slick/slick.css", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"))
         .pipe(replace("./css/slick/slick-theme.css", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"))
+        .pipe(replace("./css/animate.min.css", "https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css"))
         .pipe(replace("./js/jquery.min.js", "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"))
         .pipe(replace("./js/datepicker.min.js", "https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.4/datepicker.min.js"))
         .pipe(replace("./js/slick/slick.min.js", "https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"))

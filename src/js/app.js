@@ -609,24 +609,31 @@ $(document).ready(() => {
 
     // Saves the current journey to the browsers localstorage
     function saveJourney(customName, callback) {
-        let master = {};
-        let prexixedName = "wayfindr_" + customName;
-
-        master.mapPoints = {};
-
-        master.mapPoints.destination = mapPoints.destination;
-        master.mapPoints.origin = mapPoints.origin;
-        master.mapPoints.waypoints = mapPoints.waypoints;
-
-        master.hireInfo = hireInfo;
-        master.routeInfo = routeInfo;
-
-        if (localStorage.getItem(prexixedName)) {
-            $("#journeyName").tooltipster("open");
+        if (customName !== "") {
+            let master = {};
+            let prexixedName = "wayfindr_" + customName;
+    
+            master.mapPoints = {};
+    
+            master.mapPoints.destination = mapPoints.destination;
+            master.mapPoints.origin = mapPoints.origin;
+            master.mapPoints.waypoints = mapPoints.waypoints;
+    
+            master.hireInfo = hireInfo;
+            master.routeInfo = routeInfo;
+    
+            if (localStorage.getItem(prexixedName)) {
+                $("#journeyName").tooltipster("content", "This name already exists. Please try another");
+                $("#journeyName").tooltipster("open");
+            } else {
+                $("#journeyName").tooltipster("close");
+                localStorage.setItem(prexixedName, JSON.stringify(master));
+                if (typeof callback !== "undefined") callback();
+            }
         } else {
-            $("#journeyName").tooltipster("close");
-            localStorage.setItem(prexixedName, JSON.stringify(master));
-            if (typeof callback !== "undefined") callback();
+            console.log("please enter a name");
+            $("#journeyName").tooltipster("content", "Please enter a name to save the file as");
+            $("#journeyName").tooltipster("open");
         }
     }
 

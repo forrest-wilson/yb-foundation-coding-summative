@@ -929,8 +929,6 @@ $(document).ready(() => {
 
     // Section Seven
 
-    // Modal Overlay Buttons
-
     $("#moreVehicleInfoPopupClose").click((e) => {
         e.preventDefault();
         toggleOverlay("#moreVehicleInfoPopup", "hide");

@@ -77,6 +77,10 @@ $(document).ready(() => {
     // HTML Template response
     let htmlVehicleTemplate = null;
 
+    // Saved journey array
+    let wayfindrSavedJourneys = [];
+    let wayfindrSavedKey = [];
+
     // Holds the timeout for the counter buttons
     let counterTimeout;
 
@@ -652,7 +656,8 @@ $(document).ready(() => {
     // Event handler for loading a journey
     function loadJourneyEventHandler(e, index) {
         e.preventDefault();
-        let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(index)));
+        // let savedTrip = JSON.parse(localStorage.getItem(localStorage.key(index)));
+        let savedTrip = JSON.parse(wayfindrSavedJourneys[index]);
 
         // All MapPoints
         let allMapPoints = savedTrip.mapPoints;
@@ -711,26 +716,29 @@ $(document).ready(() => {
     // Loads a journey from localStorage
     function showJourneys() {
         $("#savedTrips").empty(); // Makes sure the div is empty before appending any more
-        if (localStorage.length !== 0) {
-            $("#loadJourneyPopup")[0].children[0].children[1].textContent = "Here are all of your saved journeys";
-            for (let i = 0; i < localStorage.length; i++) {
-                $(document).off("click", "#loadJourney" + i); // Destroy the event handlers as to not create duplicate calls
-    
-                let storageKey = localStorage.key(i);
+        for (let i = 0; i < localStorage.length; i++) {
+            if (localStorage.key(i).indexOf("wayfindr_") > -1) {
+                wayfindrSavedJourneys.push(localStorage.getItem(localStorage.key(i)));
+                wayfindrSavedKey.push(localStorage.key(i));
+            }
+        }
 
-                if (storageKey.indexOf("wayfindr_") > -1) {
-                    let button = document.createElement("button");
-                    button.className = "btn btn-style-dark load-trip-button";
-                    button.setAttribute("id", "loadJourney" + i);
-                    button.textContent = "Load: " + storageKey.substring(9); // Removes the "wayfindr_" prefix when displaying to the user
-        
-                    // Adds an event listener for each loadJourney ID
-                    $(document).on("click", "#loadJourney" + i, (e) => {
-                        loadJourneyEventHandler(e, i);
-                    });
-        
-                    $("#savedTrips").append(button);
-                }
+        if (wayfindrSavedJourneys.length !== 0) {
+            $("#loadJourneyPopup")[0].children[0].children[1].textContent = "Here are all of your saved journeys";
+            for (let i = 0; i < wayfindrSavedJourneys.length; i++) {
+                $(document).off("click", "#loadJourney" + i); // Destroy the event handlers as to not create duplicate calls
+
+                let button = document.createElement("button");
+                button.className = "btn btn-style-dark load-trip-button";
+                button.setAttribute("id", "loadJourney" + i);
+                button.textContent = "Load: " + wayfindrSavedKey[i].substring(9); // Removes the "wayfindr_" prefix when displaying to the user
+    
+                // Adds an event listener for each loadJourney ID
+                $(document).on("click", "#loadJourney" + i, (e) => {
+                    loadJourneyEventHandler(e, i);
+                });
+    
+                $("#savedTrips").append(button);
             }
         } else {
             $("#loadJourneyPopup")[0].children[0].children[1].textContent = "You don't seem to have any saved journeys. Journeys you save will appear here!";

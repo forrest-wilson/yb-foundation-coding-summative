@@ -456,7 +456,7 @@ $(document).ready(() => {
         if (recommendedHireDaysTotal < 1) {
             recommendedDays = 1; // If the total distance is less than the maxDistancePerDay variable, set the recommendedDays to 1
         } else if (recommendedHireDaysTotal >= 7) {
-            recommendedDays = 7;
+            recommendedDays = 15;
         } else {
             recommendedDays = Math.ceil(recommendedHireDaysTotal);
         }

@@ -647,7 +647,6 @@ $(document).ready(() => {
                 if (typeof callback !== "undefined") callback();
             }
         } else {
-            console.log("please enter a name");
             $("#journeyName").tooltipster("content", "Please enter a name to save the file as");
             $("#journeyName").tooltipster("open");
         }
@@ -987,7 +986,12 @@ $(document).ready(() => {
     $("#confirmSave").click((e) => {
         e.preventDefault();
         saveJourney($("#journeyName").val(), () => {
-            toggleOverlay("#saveJourneyNamePopup", "hide");
+            $("#saveJourneyNamePopup").fadeOut(transitionTime);
+            $("#journeySavedMessage").fadeIn(transitionTime);
+            setTimeout(() => {
+                $("#journeyName").val(""); // Empties the input field
+                toggleOverlay("#journeySavedMessage", "hide");
+            }, 2000);
         });
     });
 

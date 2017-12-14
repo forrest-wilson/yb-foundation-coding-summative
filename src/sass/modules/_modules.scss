@@ -210,7 +210,8 @@
 .more-vehicle-info-popup,
 .save-journey-name-popup,
 .load-journey-popup,
-.no-vehicle-matches-popup {
+.no-vehicle-matches-popup,
+.journey-saved-message {
     .inner {
         background: linear-gradient(to bottom right, $secondGradOne, $secondGradTwo);
         border-radius: $borderRadius;
@@ -359,4 +360,19 @@
     height: 1px;
     margin: 0 auto;
     background-color: white;
+}
+
+.journey-saved-message {
+    @include positioning(fixed, $t: 50%, $l: 50%);
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 300;
+
+    .inner {
+        max-width: 300px;
+
+        h2 {
+            padding: 0;
+        }
+    }
 }
